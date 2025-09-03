@@ -1,0 +1,110 @@
+.gopad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background: #f9f9f9;
+}
+
+.header {
+  font-size: 3em;
+  margin-bottom: 15px;
+}
+
+.form-container {
+  width: min(900px, 90vw);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-bottom: 10px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row-buttons {
+  gap: 5px;
+  justify-content: flex-end;
+  margin-bottom: 5px;
+}
+
+.form-row-narrow-gap {
+  margin-bottom: 0;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #333;
+  letter-spacing: 0.01em;
+}
+
+.label-game {
+  flex: 3 1 0%;
+}
+
+.label-date {
+  flex: 1 1 0%;
+  min-width: 150px;
+  max-width: 220px;
+  margin-left: 12px;
+}
+
+.input {
+  margin-left: 8px;
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1.08rem;
+  height: 2.2em;
+  box-sizing: border-box;
+  background: #fafbfc;
+  transition: border 0.2s;
+}
+
+.input:focus {
+  border: 1.5px solid #888;
+  outline: none;
+  background: #fff;
+}
+
+.input-full {
+  min-width: 320px;
+  max-width: 100%;
+}
+
+.input-date-long {
+  width: 180px;
+  min-width: 140px;
+  max-width: 220px;
+}
+
+button {
+  font-size: 1.1rem;
+  padding: 8px 18px;
+}
+
+.goban-img {
+  display: block;
+  margin: 0 auto 0 auto;
+  width: 900px;
+  height: 900px;
+  max-width: 100vw;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+}

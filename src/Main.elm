@@ -5,18 +5,39 @@
 module Main exposing (main)
 
 import Browser
+import Goban exposing (Goban)
 import Html exposing (Attribute, Html, button, div, form, h1, img, input, label, node, text)
 import Html.Attributes exposing (alt, class, src, type_)
 import Html.Events exposing (onClick)
 
 
+boardSize : Int
+boardSize =
+    19
+
+
+type alias Game =
+    { name : String
+    , whitePlayer : String
+    , blackPlayer : String
+    , date : String
+    , goban : Goban
+    }
+
+
 type alias Model =
-    ()
+    Game
 
 
 main =
     Browser.sandbox
-        { init = ()
+        { init =
+            { name = ""
+            , whitePlayer = ""
+            , blackPlayer = ""
+            , date = ""
+            , goban = { size = boardSize, moves = [] }
+            }
         , update = \_ model -> model
         , view = view
         }

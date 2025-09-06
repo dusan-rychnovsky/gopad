@@ -1,4 +1,4 @@
-module Goban exposing (Color(..), Coords, Goban, Move, coordsToPos, currentPlayer, currentPosition, getAdjacentPoints, isAdjacent, placeStone, posToCoords)
+module Goban exposing (Color(..), Coords, Goban, Move, allGroups, belongsTo, coordsToPos, currentPlayer, currentSituation, getAdjacentPoints, isAdjacent, placeStone, posToCoords)
 
 import Dict exposing (Dict)
 import Set exposing (Set)
@@ -33,8 +33,14 @@ type alias Coords =
     ( Row, Col )
 
 
-type alias Position =
-    Dict Coords Color
+type alias Situation =
+    { gobanSize : Int
+    , stones : Dict Coords Color
+    }
+
+
+type alias Group =
+    Set Coords
 
 
 gobanImg =
@@ -143,11 +149,39 @@ isAdjacent gobanSize first second =
     getAdjacentPoints gobanSize first |> Set.member second
 
 
-currentPosition : Goban -> Position
-currentPosition goban =
-    List.foldl applyMove Dict.empty goban.moves
+belongsTo : Int -> Group -> Coords -> Bool
+belongsTo gobanSize group coords =
+    Set.foldl (\c acc -> acc || isAdjacent gobanSize c coords) False group
 
 
-applyMove : Move -> Position -> Position
-applyMove move position =
-    Dict.insert move.coords move.color position
+currentSituation : Goban -> Situation
+currentSituation goban =
+    List.foldl applyMove { gobanSize = goban.size, stones = Dict.empty } goban.moves
+
+
+applyMove : Move -> Situation -> Situation
+applyMove move situation =
+    let
+        currentPlayerGroups =
+            allGroups situation move.color
+    in
+    { situation | stones = Dict.insert move.coords move.color situation.stones }
+
+
+allGroups : Situation -> Color -> List Group
+allGroups situation color =
+    let
+        addStone coords groups =
+            let
+                ( adjacentGroups, othersGroups ) =
+                    List.partition (\group -> belongsTo situation.gobanSize group coords) groups
+
+                merged =
+                    List.foldl Set.union (Set.singleton coords) adjacentGroups
+            in
+            merged :: othersGroups
+    in
+    Dict.toList situation.stones
+        |> List.filter (\( _, c ) -> c == color)
+        |> List.map Tuple.first
+        |> List.foldl addStone []

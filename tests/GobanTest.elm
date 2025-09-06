@@ -1,5 +1,6 @@
 module GobanTest exposing (all)
 
+import Dict exposing (Dict)
 import Expect
 import Goban exposing (..)
 import Set exposing (Set)
@@ -198,5 +199,134 @@ all =
             , test "adjacent at edge" <|
                 \_ ->
                     Expect.equal (isAdjacent 19 ( 0, 0 ) ( 0, 1 )) True
+            ]
+        , describe "belongsTo"
+            [ test "stone adjacent to group (horizontal)" <|
+                \_ ->
+                    let
+                        group =
+                            Set.fromList [ ( 3, 3 ), ( 3, 4 ) ]
+
+                        coords =
+                            ( 3, 5 )
+                    in
+                    Expect.equal (belongsTo 19 group coords) True
+            , test "stone adjacent to group (vertical)" <|
+                \_ ->
+                    let
+                        group =
+                            Set.fromList [ ( 3, 3 ), ( 4, 3 ) ]
+
+                        coords =
+                            ( 5, 3 )
+                    in
+                    Expect.equal (belongsTo 19 group coords) True
+            , test "stone not adjacent to group" <|
+                \_ ->
+                    let
+                        group =
+                            Set.fromList [ ( 3, 3 ), ( 3, 4 ) ]
+
+                        coords =
+                            ( 5, 5 )
+                    in
+                    Expect.equal (belongsTo 19 group coords) False
+            , test "stone adjacent to group at the edge of the board" <|
+                \_ ->
+                    let
+                        group =
+                            Set.fromList [ ( 0, 0 ) ]
+
+                        coords =
+                            ( 0, 1 )
+                    in
+                    Expect.equal (belongsTo 19 group coords) True
+            , test "stone diagonally adjacent does not belong to group" <|
+                \_ ->
+                    let
+                        group =
+                            Set.fromList [ ( 3, 3 ) ]
+
+                        coords =
+                            ( 4, 4 )
+                    in
+                    Expect.equal (belongsTo 19 group coords) False
+            ]
+        , describe "allGroups"
+            [ test "single stone forms a group" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 9
+                            , stones = Dict.fromList [ ( ( 3, 3 ), Black ) ]
+                            }
+
+                        groups =
+                            allGroups situation Black
+                    in
+                    Expect.equal groups [ Set.fromList [ (3,3) ] ]
+            , test "adjacent stones form one group" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 9
+                            , stones = Dict.fromList [ ( ( 3, 3 ), Black ), ( ( 3, 4 ), Black ) ]
+                            }
+
+                        groups =
+                            allGroups situation Black
+                    in
+                    Expect.equal groups [ Set.fromList [ (3,3), (3,4) ] ]
+            , test "non-adjacent stones form separate groups" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 9
+                            , stones = Dict.fromList [ ( ( 3, 3 ), Black ), ( ( 5, 5 ), Black ) ]
+                            }
+
+                        groups =
+                            allGroups situation Black
+                    in
+                    Expect.all
+                        [ (\_ -> Expect.equal (List.length groups) 2)
+                        , (\_ -> Expect.equal (List.member (Set.fromList [ (3,3) ]) groups) True)
+                        , (\_ -> Expect.equal (List.member (Set.fromList [ (5,5) ]) groups) True)
+                        ]
+                        ()
+            , test "diagonally adjacent stones form separate groups" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 9
+                            , stones = Dict.fromList [ ( ( 3, 3 ), Black ), ( ( 4, 4 ), Black ) ]
+                            }
+
+                        groups =
+                            allGroups situation Black
+                    in
+                    Expect.all
+                        [ (\_ -> Expect.equal (List.length groups) 2)
+                        , (\_ -> Expect.equal (List.member (Set.fromList [ (3,3) ]) groups) True)
+                        , (\_ -> Expect.equal (List.member (Set.fromList [ (4,4) ]) groups) True)
+                        ]
+                        ()
+            , test "groups for only the given color are returned" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 9
+                            , stones = Dict.fromList [ ( ( 3, 3 ), Black ), ( ( 3, 4 ), White ), ( ( 4, 4 ), Black ) ]
+                            }
+
+                        groups =
+                            allGroups situation Black
+                    in
+                    Expect.all
+                        [ (\_ -> Expect.equal (List.length groups) 2)
+                        , (\_ -> Expect.equal (List.member (Set.fromList [ (3,3) ]) groups) True)
+                        , (\_ -> Expect.equal (List.member (Set.fromList [ (4,4) ]) groups) True)
+                        ]
+                        ()
             ]
         ]

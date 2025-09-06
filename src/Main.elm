@@ -1,4 +1,5 @@
 -- elm-format src/Main.elm --yes
+-- elm-test
 -- elm make src/Main.elm --output=elm.js
 
 
@@ -9,6 +10,7 @@ import Goban exposing (Goban)
 import Html exposing (Attribute, Html, button, div, form, h1, img, input, label, node, text)
 import Html.Attributes exposing (alt, class, src, type_)
 import Html.Events exposing (onClick)
+import Json.Decode
 
 
 boardSize : Int
@@ -29,6 +31,10 @@ type alias Model =
     Game
 
 
+type Msg
+    = GobanClicked ( Int, Int )
+
+
 main =
     Browser.sandbox
         { init =
@@ -38,12 +44,27 @@ main =
             , date = ""
             , goban = { size = boardSize, moves = [] }
             }
-        , update = \_ model -> model
+        , update = update
         , view = view
         }
 
 
-view : Model -> Html msg
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        GobanClicked ( posX, posY ) ->
+            Debug.log
+                ("GobanClicked: x = "
+                    ++ String.fromInt posX
+                    ++ ", y = "
+                    ++ String.fromInt posY
+                    ++ ", coords = "
+                    ++ Debug.toString (Goban.posToCoords model.goban posX posY 900)
+                )
+                model
+
+
+view : Model -> Html Msg
 view _ =
     div [ class "gopad" ]
         [ h1 [ class "header" ] [ text "GOPAD" ]
@@ -66,5 +87,15 @@ view _ =
                     ]
                 ]
             ]
-        , img [ src "public/goban.png", class "goban-img", alt "Goban board" ] []
+        , img
+            [ src "public/goban.png"
+            , class "goban-img"
+            , alt "Goban board"
+            , Html.Events.on "click"
+                (Json.Decode.map2 (\x y -> GobanClicked ( x, y ))
+                    (Json.Decode.field "offsetX" Json.Decode.int)
+                    (Json.Decode.field "offsetY" Json.Decode.int)
+                )
+            ]
+            []
         ]

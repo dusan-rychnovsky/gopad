@@ -1,4 +1,4 @@
-module Goban exposing (Color(..), Coords, Goban, Move, currentPlayer, getNeighbours)
+module Goban exposing (Color(..), Coords, Goban, Move, currentPlayer, getNeighbours, posToCoords)
 
 import Set exposing (Set)
 
@@ -30,6 +30,48 @@ type alias Col =
 
 type alias Coords =
     ( Row, Col )
+
+
+gobanImg =
+    { sizePx = 2000.0
+    , paddingPx = 60.0
+    , squarePx = 99.0
+    , linePx = 5.0
+    }
+
+
+posToCoords : Goban -> Int -> Int -> Int -> ( Int, Int )
+posToCoords goban posX posY imgSize =
+    let
+        scale =
+            gobanImg.sizePx / toFloat imgSize
+
+        x =
+            toFloat posX * scale
+
+        y =
+            toFloat posY * scale
+
+        step =
+            gobanImg.squarePx + gobanImg.linePx
+
+        clamp v =
+            if v < 0 then
+                0
+
+            else if v > goban.size - 1 then
+                goban.size - 1
+
+            else
+                v
+
+        col =
+            clamp (round ((x - gobanImg.paddingPx) / step))
+
+        row =
+            clamp (round ((y - gobanImg.paddingPx) / step))
+    in
+    ( row, col )
 
 
 currentPlayer : Goban -> Color

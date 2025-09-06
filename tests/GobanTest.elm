@@ -182,4 +182,21 @@ all =
                     in
                     Expect.equal (getAdjacentPoints gobanSize coords) expected
             ]
+        , describe "isAdjacent"
+            [ test "adjacent horizontally" <|
+                \_ ->
+                    Expect.equal (isAdjacent 19 ( 3, 3 ) ( 3, 4 )) True
+            , test "adjacent vertically" <|
+                \_ ->
+                    Expect.equal (isAdjacent 19 ( 3, 3 ) ( 4, 3 )) True
+            , test "not adjacent diagonally" <|
+                \_ ->
+                    Expect.equal (isAdjacent 19 ( 3, 3 ) ( 4, 4 )) False
+            , test "not adjacent far away" <|
+                \_ ->
+                    Expect.equal (isAdjacent 19 ( 3, 3 ) ( 10, 10 )) False
+            , test "adjacent at edge" <|
+                \_ ->
+                    Expect.equal (isAdjacent 19 ( 0, 0 ) ( 0, 1 )) True
+            ]
         ]

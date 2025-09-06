@@ -1,4 +1,4 @@
-module Goban exposing (Color(..), Coords, Goban, Move, coordsToPos, currentPlayer, currentPosition, getAdjacentPoints, placeStone, posToCoords)
+module Goban exposing (Color(..), Coords, Goban, Move, coordsToPos, currentPlayer, currentPosition, getAdjacentPoints, isAdjacent, placeStone, posToCoords)
 
 import Dict exposing (Dict)
 import Set exposing (Set)
@@ -136,6 +136,11 @@ getAdjacentPoints gobanSize ( row, col ) =
     candidates
         |> List.filter (\( r, c ) -> r >= 0 && c >= 0 && r < gobanSize && c < gobanSize)
         |> Set.fromList
+
+
+isAdjacent : Int -> Coords -> Coords -> Bool
+isAdjacent gobanSize first second =
+    getAdjacentPoints gobanSize first |> Set.member second
 
 
 currentPosition : Goban -> Position

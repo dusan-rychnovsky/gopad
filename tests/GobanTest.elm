@@ -9,7 +9,32 @@ import Test exposing (..)
 all : Test
 all =
     describe "Goban"
-        [ describe "posToCoords"
+        [ describe "coordsToPos"
+            (let
+                goban =
+                    Goban 19 []
+
+                imgSize =
+                    900
+
+                scale v =
+                    round (v * imgSize / 2000)
+             in
+             [ test "center of board" <|
+                \_ ->
+                    Expect.equal (coordsToPos goban ( 9, 9 ) imgSize)
+                        ( scale 996, scale 996 )
+             , test "top-left corner" <|
+                \_ ->
+                    Expect.equal (coordsToPos goban ( 0, 0 ) imgSize)
+                        ( scale 60, scale 60 )
+             , test "bottom-right corner" <|
+                \_ ->
+                    Expect.equal (coordsToPos goban ( 18, 18 ) imgSize)
+                        ( scale 1932, scale 1932 )
+             ]
+            )
+        , describe "posToCoords"
             (let
                 goban =
                     Goban 19 []
@@ -62,6 +87,47 @@ all =
                                 ]
                     in
                     Expect.equal (currentPlayer goban) Black
+            ]
+        , describe "placeStone"
+            [ test "places black stone on empty board" <|
+                \_ ->
+                    let
+                        goban =
+                            Goban 19 []
+
+                        coords =
+                            ( 3, 3 )
+
+                        newGoban =
+                            placeStone goban coords
+                    in
+                    Expect.equal newGoban.moves [ { color = Black, coords = ( 3, 3 ) } ]
+            , test "places white stone after black" <|
+                \_ ->
+                    let
+                        goban =
+                            Goban 19 [ { color = Black, coords = ( 3, 3 ) } ]
+
+                        coords =
+                            ( 4, 4 )
+
+                        newGoban =
+                            placeStone goban coords
+                    in
+                    Expect.equal newGoban.moves [ { color = Black, coords = ( 3, 3 ) }, { color = White, coords = ( 4, 4 ) } ]
+            , test "places black stone after black and white" <|
+                \_ ->
+                    let
+                        goban =
+                            Goban 19 [ { color = Black, coords = ( 3, 3 ) }, { color = White, coords = ( 4, 4 ) } ]
+
+                        coords =
+                            ( 5, 5 )
+
+                        newGoban =
+                            placeStone goban coords
+                    in
+                    Expect.equal newGoban.moves [ { color = Black, coords = ( 3, 3 ) }, { color = White, coords = ( 4, 4 ) }, { color = Black, coords = ( 5, 5 ) } ]
             ]
         , describe "getNeighbours"
             [ test "for a stone in the center of the board returns 4 neighbours" <|

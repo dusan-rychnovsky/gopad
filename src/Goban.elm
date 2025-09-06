@@ -1,4 +1,4 @@
-module Goban exposing (Color(..), Coords, Goban, Move, currentPlayer, getNeighbours, posToCoords)
+module Goban exposing (Color(..), Coords, Goban, Move, coordsToPos, currentPlayer, getNeighbours, placeStone, posToCoords)
 
 import Set exposing (Set)
 
@@ -40,7 +40,7 @@ gobanImg =
     }
 
 
-posToCoords : Goban -> Int -> Int -> Int -> ( Int, Int )
+posToCoords : Goban -> Int -> Int -> Int -> Coords
 posToCoords goban posX posY imgSize =
     let
         scale =
@@ -72,6 +72,35 @@ posToCoords goban posX posY imgSize =
             clamp (round ((y - gobanImg.paddingPx) / step))
     in
     ( row, col )
+
+
+coordsToPos : Goban -> Coords -> Int -> ( Int, Int )
+coordsToPos goban ( row, col ) imgSize =
+    let
+        scale =
+            toFloat imgSize / gobanImg.sizePx
+
+        step =
+            gobanImg.squarePx + gobanImg.linePx
+
+        x =
+            (gobanImg.paddingPx + toFloat col * step) * scale
+
+        y =
+            (gobanImg.paddingPx + toFloat row * step) * scale
+    in
+    ( round x, round y )
+
+
+placeStone : Goban -> Coords -> Goban
+placeStone goban coords =
+    let
+        newMove =
+            { color = currentPlayer goban
+            , coords = coords
+            }
+    in
+    { goban | moves = goban.moves ++ [ newMove ] }
 
 
 currentPlayer : Goban -> Color

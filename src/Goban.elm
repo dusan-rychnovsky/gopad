@@ -1,4 +1,4 @@
-module Goban exposing (Color(..), Coords, Goban, Move, allGroups, belongsTo, coordsToPos, currentPlayer, currentSituation, getAdjacentPoints, isAdjacent, placeStone, posToCoords)
+module Goban exposing (Color(..), Coords, Goban, Move, allGroups, belongsTo, coordsToPos, currentPlayer, currentSituation, getAdjacentPoints, isAdjacent, placeStone, posToCoords, stoneAt)
 
 import Dict exposing (Dict)
 import Set exposing (Set)
@@ -185,3 +185,8 @@ allGroups situation color =
         |> List.filter (\( _, c ) -> c == color)
         |> List.map Tuple.first
         |> List.foldl addStone []
+
+
+stoneAt : Situation -> Coords -> Maybe Color
+stoneAt situation coords =
+    Dict.get coords situation.stones

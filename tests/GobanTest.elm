@@ -329,4 +329,42 @@ all =
                         ]
                         ()
             ]
+        , describe "stoneAt"
+            [ test "returns Nothing for empty position" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 9
+                            , stones = Dict.empty
+                            }
+                    in
+                    Expect.equal (stoneAt situation (3,3)) Nothing
+            , test "returns color for occupied position (Black)" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 9
+                            , stones = Dict.fromList [ ((3,3), Black) ]
+                            }
+                    in
+                    Expect.equal (stoneAt situation (3,3)) (Just Black)
+            , test "returns color for occupied position (White)" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 9
+                            , stones = Dict.fromList [ ((4,4), White) ]
+                            }
+                    in
+                    Expect.equal (stoneAt situation (4,4)) (Just White)
+            , test "returns Nothing for non-occupied position when others are occupied" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 9
+                            , stones = Dict.fromList [ ((3,3), Black), ((4,4), White) ]
+                            }
+                    in
+                    Expect.equal (stoneAt situation (5,5)) Nothing
+            ]
         ]

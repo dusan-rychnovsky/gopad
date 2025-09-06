@@ -190,3 +190,11 @@ allGroups situation color =
 stoneAt : Situation -> Coords -> Maybe Color
 stoneAt situation coords =
     Dict.get coords situation.stones
+
+
+numLiberties : Situation -> Group -> Int
+numLiberties situation group =
+    group
+        |> Set.foldl (\coords acc -> Set.union acc (getAdjacentPoints situation.gobanSize coords)) Set.empty
+        |> Set.filter (\pt -> stoneAt situation pt == Nothing)
+        |> Set.size

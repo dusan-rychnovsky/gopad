@@ -367,4 +367,56 @@ all =
                     in
                     Expect.equal (stoneAt situation (5,5)) Nothing
             ]
+        , describe "numLiberties"
+            [ test "single stone in center has 4 liberties" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 19
+                            , stones = Dict.fromList [ ((4,4), Black) ]
+                            }
+                        group = Set.fromList [ (4,4) ]
+                    in
+                    Expect.equal (numLiberties situation group) 4
+            , test "single stone in corner has 2 liberties" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 19
+                            , stones = Dict.fromList [ ((0,0), Black) ]
+                            }
+                        group = Set.fromList [ (0,0) ]
+                    in
+                    Expect.equal (numLiberties situation group) 2
+            , test "single stone on edge has 3 liberties" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 19
+                            , stones = Dict.fromList [ ((0,4), Black) ]
+                            }
+                        group = Set.fromList [ (0,4) ]
+                    in
+                    Expect.equal (numLiberties situation group) 3
+            , test "two adjacent stones share liberties" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 19
+                            , stones = Dict.fromList [ ((4,4), Black), ((4,5), Black) ]
+                            }
+                        group = Set.fromList [ (4,4), (4,5) ]
+                    in
+                    Expect.equal (numLiberties situation group) 6
+            , test "liberties blocked by other stones" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 19
+                            , stones = Dict.fromList [ ((4,4), Black), ((4,5), White) ]
+                            }
+                        group = Set.fromList [ (4,4) ]
+                    in
+                    Expect.equal (numLiberties situation group) 3
+            ]
         ]

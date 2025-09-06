@@ -1,4 +1,4 @@
-module Goban exposing (Color(..), Coords, Goban, Move, coordsToPos, currentPlayer, currentPosition, getNeighbours, placeStone, posToCoords)
+module Goban exposing (Color(..), Coords, Goban, Move, coordsToPos, currentPlayer, currentPosition, getAdjacentPoints, placeStone, posToCoords)
 
 import Dict exposing (Dict)
 import Set exposing (Set)
@@ -123,8 +123,8 @@ currentPlayer goban =
             Black
 
 
-getNeighbours : Goban -> Coords -> Set Coords
-getNeighbours goban ( row, col ) =
+getAdjacentPoints : Int -> Coords -> Set Coords
+getAdjacentPoints gobanSize ( row, col ) =
     let
         candidates =
             [ ( row - 1, col )
@@ -134,7 +134,7 @@ getNeighbours goban ( row, col ) =
             ]
     in
     candidates
-        |> List.filter (\( r, c ) -> r >= 0 && c >= 0 && r < goban.size && c < goban.size)
+        |> List.filter (\( r, c ) -> r >= 0 && c >= 0 && r < gobanSize && c < gobanSize)
         |> Set.fromList
 
 

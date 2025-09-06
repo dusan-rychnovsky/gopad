@@ -129,12 +129,12 @@ all =
                     in
                     Expect.equal newGoban.moves [ { color = Black, coords = ( 3, 3 ) }, { color = White, coords = ( 4, 4 ) }, { color = Black, coords = ( 5, 5 ) } ]
             ]
-        , describe "getNeighbours"
-            [ test "for a stone in the center of the board returns 4 neighbours" <|
+        , describe "getAdjacentPoints"
+            [ test "for a stone in the center of the board returns 4 points" <|
                 \_ ->
                     let
-                        goban =
-                            Goban 19 []
+                        gobanSize =
+                            19
 
                         coords =
                             ( 9, 9 )
@@ -147,12 +147,12 @@ all =
                                 , ( 9, 10 )
                                 ]
                     in
-                    Expect.equal (getNeighbours goban coords) expected
-            , test "for a stone in the corner of the board returns 2 neighbours" <|
+                    Expect.equal (getAdjacentPoints gobanSize coords) expected
+            , test "for a stone in the corner of the board returns 2 points" <|
                 \_ ->
                     let
-                        goban =
-                            Goban 19 []
+                        gobanSize =
+                            19
 
                         coords =
                             ( 0, 0 )
@@ -163,12 +163,12 @@ all =
                                 , ( 0, 1 )
                                 ]
                     in
-                    Expect.equal (getNeighbours goban coords) expected
-            , test "for a stone on the edge of the board returns 3 neighbours" <|
+                    Expect.equal (getAdjacentPoints gobanSize coords) expected
+            , test "for a stone on the edge of the board returns 3 points" <|
                 \_ ->
                     let
-                        goban =
-                            Goban 19 []
+                        gobanSize =
+                            19
 
                         coords =
                             ( 0, 1 )
@@ -180,6 +180,6 @@ all =
                                 , ( 1, 1 )
                                 ]
                     in
-                    Expect.equal (getNeighbours goban coords) expected
+                    Expect.equal (getAdjacentPoints gobanSize coords) expected
             ]
         ]

@@ -6,6 +6,7 @@
 module Main exposing (main)
 
 import Browser
+import Dict exposing (Dict)
 import Goban exposing (Goban)
 import Html exposing (Attribute, Html, button, div, form, h1, img, input, label, node, text)
 import Html.Attributes exposing (alt, class, src, style, type_)
@@ -114,32 +115,34 @@ view model =
                 ]
                 []
              ]
-                ++ List.map
-                    (\move ->
-                        let
-                            ( posX, posY ) =
-                                Goban.coordsToPos model.goban move.coords gobanImgSize
+                ++ (Goban.currentPosition model.goban
+                        |> Dict.toList
+                        |> List.map
+                            (\( coords, color ) ->
+                                let
+                                    ( posX, posY ) =
+                                        Goban.coordsToPos model.goban coords gobanImgSize
 
-                            stoneSrc =
-                                case move.color of
-                                    Goban.Black ->
-                                        "public/black-stone.png"
+                                    stoneSrc =
+                                        case color of
+                                            Goban.Black ->
+                                                "public/black-stone.png"
 
-                                    Goban.White ->
-                                        "public/white-stone.png"
-                        in
-                        img
-                            [ src stoneSrc
-                            , alt "stone"
-                            , style "position" "absolute"
-                            , style "left" (String.fromInt (posX - stoneImgSize // 2) ++ "px")
-                            , style "top" (String.fromInt (posY - stoneImgSize // 2) ++ "px")
-                            , style "width" (String.fromInt stoneImgSize ++ "px")
-                            , style "height" (String.fromInt stoneImgSize ++ "px")
-                            , style "pointer-events" "none"
-                            ]
-                            []
-                    )
-                    model.goban.moves
+                                            Goban.White ->
+                                                "public/white-stone.png"
+                                in
+                                img
+                                    [ src stoneSrc
+                                    , alt "stone"
+                                    , style "position" "absolute"
+                                    , style "left" (String.fromInt (posX - stoneImgSize // 2) ++ "px")
+                                    , style "top" (String.fromInt (posY - stoneImgSize // 2) ++ "px")
+                                    , style "width" (String.fromInt stoneImgSize ++ "px")
+                                    , style "height" (String.fromInt stoneImgSize ++ "px")
+                                    , style "pointer-events" "none"
+                                    ]
+                                    []
+                            )
+                   )
             )
         ]

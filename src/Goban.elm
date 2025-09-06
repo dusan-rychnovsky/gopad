@@ -1,5 +1,6 @@
-module Goban exposing (Color(..), Coords, Goban, Move, coordsToPos, currentPlayer, getNeighbours, placeStone, posToCoords)
+module Goban exposing (Color(..), Coords, Goban, Move, coordsToPos, currentPlayer, currentPosition, getNeighbours, placeStone, posToCoords)
 
+import Dict exposing (Dict)
 import Set exposing (Set)
 
 
@@ -30,6 +31,10 @@ type alias Col =
 
 type alias Coords =
     ( Row, Col )
+
+
+type alias Position =
+    Dict Coords Color
 
 
 gobanImg =
@@ -131,3 +136,13 @@ getNeighbours goban ( row, col ) =
     candidates
         |> List.filter (\( r, c ) -> r >= 0 && c >= 0 && r < goban.size && c < goban.size)
         |> Set.fromList
+
+
+currentPosition : Goban -> Position
+currentPosition goban =
+    List.foldl applyMove Dict.empty goban.moves
+
+
+applyMove : Move -> Position -> Position
+applyMove move position =
+    Dict.insert move.coords move.color position

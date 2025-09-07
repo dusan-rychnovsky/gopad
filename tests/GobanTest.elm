@@ -479,4 +479,12 @@ all =
                     in
                     Expect.equal (isAlive situation group) False
             ]
+        , describe "opponent"
+            [ test "opponent of Black is White" <|
+                \_ ->
+                    Expect.equal (opponent Black) White
+            , test "opponent of White is Black" <|
+                \_ ->
+                    Expect.equal (opponent White) Black
+            ]
         ]

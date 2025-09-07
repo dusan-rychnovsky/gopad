@@ -1,4 +1,4 @@
-module Goban exposing (Color(..), Coords, Goban, Move, allGroups, belongsTo, coordsToPos, currentPlayer, currentSituation, getAdjacentPoints, isAdjacent, isAlive, numLiberties, placeStone, posToCoords, stoneAt)
+module Goban exposing (..)
 
 import Dict exposing (Dict)
 import Set exposing (Set)
@@ -118,12 +118,7 @@ currentPlayer : Goban -> Color
 currentPlayer goban =
     case List.head (List.reverse goban.moves) of
         Just lastMove ->
-            case lastMove.color of
-                White ->
-                    Black
-
-                Black ->
-                    White
+            opponent lastMove.color
 
         Nothing ->
             Black
@@ -166,6 +161,16 @@ applyMove move situation =
             allGroups situation move.color
     in
     { situation | stones = Dict.insert move.coords move.color situation.stones }
+
+
+opponent : Color -> Color
+opponent color =
+    case color of
+        White ->
+            Black
+
+        Black ->
+            White
 
 
 allGroups : Situation -> Color -> List Group

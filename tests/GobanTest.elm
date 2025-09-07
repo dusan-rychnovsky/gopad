@@ -264,7 +264,7 @@ all =
                         groups =
                             allGroups situation Black
                     in
-                    Expect.equal groups [ Set.fromList [ (3,3) ] ]
+                    Expect.equal groups [ Set.fromList [ ( 3, 3 ) ] ]
             , test "adjacent stones form one group" <|
                 \_ ->
                     let
@@ -276,7 +276,7 @@ all =
                         groups =
                             allGroups situation Black
                     in
-                    Expect.equal groups [ Set.fromList [ (3,3), (3,4) ] ]
+                    Expect.equal groups [ Set.fromList [ ( 3, 3 ), ( 3, 4 ) ] ]
             , test "non-adjacent stones form separate groups" <|
                 \_ ->
                     let
@@ -289,9 +289,9 @@ all =
                             allGroups situation Black
                     in
                     Expect.all
-                        [ (\_ -> Expect.equal (List.length groups) 2)
-                        , (\_ -> Expect.equal (List.member (Set.fromList [ (3,3) ]) groups) True)
-                        , (\_ -> Expect.equal (List.member (Set.fromList [ (5,5) ]) groups) True)
+                        [ \_ -> Expect.equal (List.length groups) 2
+                        , \_ -> Expect.equal (List.member (Set.fromList [ ( 3, 3 ) ]) groups) True
+                        , \_ -> Expect.equal (List.member (Set.fromList [ ( 5, 5 ) ]) groups) True
                         ]
                         ()
             , test "diagonally adjacent stones form separate groups" <|
@@ -306,9 +306,9 @@ all =
                             allGroups situation Black
                     in
                     Expect.all
-                        [ (\_ -> Expect.equal (List.length groups) 2)
-                        , (\_ -> Expect.equal (List.member (Set.fromList [ (3,3) ]) groups) True)
-                        , (\_ -> Expect.equal (List.member (Set.fromList [ (4,4) ]) groups) True)
+                        [ \_ -> Expect.equal (List.length groups) 2
+                        , \_ -> Expect.equal (List.member (Set.fromList [ ( 3, 3 ) ]) groups) True
+                        , \_ -> Expect.equal (List.member (Set.fromList [ ( 4, 4 ) ]) groups) True
                         ]
                         ()
             , test "groups for only the given color are returned" <|
@@ -323,9 +323,9 @@ all =
                             allGroups situation Black
                     in
                     Expect.all
-                        [ (\_ -> Expect.equal (List.length groups) 2)
-                        , (\_ -> Expect.equal (List.member (Set.fromList [ (3,3) ]) groups) True)
-                        , (\_ -> Expect.equal (List.member (Set.fromList [ (4,4) ]) groups) True)
+                        [ \_ -> Expect.equal (List.length groups) 2
+                        , \_ -> Expect.equal (List.member (Set.fromList [ ( 3, 3 ) ]) groups) True
+                        , \_ -> Expect.equal (List.member (Set.fromList [ ( 4, 4 ) ]) groups) True
                         ]
                         ()
             ]
@@ -338,34 +338,34 @@ all =
                             , stones = Dict.empty
                             }
                     in
-                    Expect.equal (stoneAt situation (3,3)) Nothing
+                    Expect.equal (stoneAt situation ( 3, 3 )) Nothing
             , test "returns color for occupied position (Black)" <|
                 \_ ->
                     let
                         situation =
                             { gobanSize = 9
-                            , stones = Dict.fromList [ ((3,3), Black) ]
+                            , stones = Dict.fromList [ ( ( 3, 3 ), Black ) ]
                             }
                     in
-                    Expect.equal (stoneAt situation (3,3)) (Just Black)
+                    Expect.equal (stoneAt situation ( 3, 3 )) (Just Black)
             , test "returns color for occupied position (White)" <|
                 \_ ->
                     let
                         situation =
                             { gobanSize = 9
-                            , stones = Dict.fromList [ ((4,4), White) ]
+                            , stones = Dict.fromList [ ( ( 4, 4 ), White ) ]
                             }
                     in
-                    Expect.equal (stoneAt situation (4,4)) (Just White)
+                    Expect.equal (stoneAt situation ( 4, 4 )) (Just White)
             , test "returns Nothing for non-occupied position when others are occupied" <|
                 \_ ->
                     let
                         situation =
                             { gobanSize = 9
-                            , stones = Dict.fromList [ ((3,3), Black), ((4,4), White) ]
+                            , stones = Dict.fromList [ ( ( 3, 3 ), Black ), ( ( 4, 4 ), White ) ]
                             }
                     in
-                    Expect.equal (stoneAt situation (5,5)) Nothing
+                    Expect.equal (stoneAt situation ( 5, 5 )) Nothing
             ]
         , describe "numLiberties"
             [ test "single stone in center has 4 liberties" <|
@@ -373,9 +373,11 @@ all =
                     let
                         situation =
                             { gobanSize = 19
-                            , stones = Dict.fromList [ ((4,4), Black) ]
+                            , stones = Dict.fromList [ ( ( 4, 4 ), Black ) ]
                             }
-                        group = Set.fromList [ (4,4) ]
+
+                        group =
+                            Set.fromList [ ( 4, 4 ) ]
                     in
                     Expect.equal (numLiberties situation group) 4
             , test "single stone in corner has 2 liberties" <|
@@ -383,9 +385,11 @@ all =
                     let
                         situation =
                             { gobanSize = 19
-                            , stones = Dict.fromList [ ((0,0), Black) ]
+                            , stones = Dict.fromList [ ( ( 0, 0 ), Black ) ]
                             }
-                        group = Set.fromList [ (0,0) ]
+
+                        group =
+                            Set.fromList [ ( 0, 0 ) ]
                     in
                     Expect.equal (numLiberties situation group) 2
             , test "single stone on edge has 3 liberties" <|
@@ -393,9 +397,11 @@ all =
                     let
                         situation =
                             { gobanSize = 19
-                            , stones = Dict.fromList [ ((0,4), Black) ]
+                            , stones = Dict.fromList [ ( ( 0, 4 ), Black ) ]
                             }
-                        group = Set.fromList [ (0,4) ]
+
+                        group =
+                            Set.fromList [ ( 0, 4 ) ]
                     in
                     Expect.equal (numLiberties situation group) 3
             , test "two adjacent stones share liberties" <|
@@ -403,9 +409,11 @@ all =
                     let
                         situation =
                             { gobanSize = 19
-                            , stones = Dict.fromList [ ((4,4), Black), ((4,5), Black) ]
+                            , stones = Dict.fromList [ ( ( 4, 4 ), Black ), ( ( 4, 5 ), Black ) ]
                             }
-                        group = Set.fromList [ (4,4), (4,5) ]
+
+                        group =
+                            Set.fromList [ ( 4, 4 ), ( 4, 5 ) ]
                     in
                     Expect.equal (numLiberties situation group) 6
             , test "liberties blocked by other stones" <|
@@ -413,10 +421,62 @@ all =
                     let
                         situation =
                             { gobanSize = 19
-                            , stones = Dict.fromList [ ((4,4), Black), ((4,5), White) ]
+                            , stones = Dict.fromList [ ( ( 4, 4 ), Black ), ( ( 4, 5 ), White ) ]
                             }
-                        group = Set.fromList [ (4,4) ]
+
+                        group =
+                            Set.fromList [ ( 4, 4 ) ]
                     in
                     Expect.equal (numLiberties situation group) 3
+            ]
+        , describe "isAlive"
+            [ test "single stone with liberties is alive" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 19
+                            , stones = Dict.fromList [ ( ( 4, 4 ), Black ) ]
+                            }
+
+                        group =
+                            Set.fromList [ ( 4, 4 ) ]
+                    in
+                    Expect.equal (isAlive situation group) True
+            , test "single stone with no liberties is not alive" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 19
+                            , stones = Dict.fromList [ ( ( 4, 4 ), Black ), ( ( 4, 5 ), White ), ( ( 4, 3 ), White ), ( ( 3, 4 ), White ), ( ( 5, 4 ), White ) ]
+                            }
+
+                        group =
+                            Set.fromList [ ( 4, 4 ) ]
+                    in
+                    Expect.equal (isAlive situation group) False
+            , test "group with at least one liberty is alive" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 19
+                            , stones = Dict.fromList [ ( ( 4, 4 ), Black ), ( ( 4, 5 ), Black ), ( ( 4, 3 ), White ), ( ( 3, 4 ), White ), ( ( 5, 4 ), White ) ]
+                            }
+
+                        group =
+                            Set.fromList [ ( 4, 4 ), ( 4, 5 ) ]
+                    in
+                    Expect.equal (isAlive situation group) True
+            , test "group with no liberties is not alive" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 19
+                            , stones = Dict.fromList [ ( ( 4, 4 ), Black ), ( ( 4, 5 ), Black ), ( ( 4, 3 ), White ), ( ( 3, 4 ), White ), ( ( 5, 4 ), White ), ( ( 4, 6 ), White ), ( ( 5, 5 ), White ), ( ( 3, 5 ), White ) ]
+                            }
+
+                        group =
+                            Set.fromList [ ( 4, 4 ), ( 4, 5 ) ]
+                    in
+                    Expect.equal (isAlive situation group) False
             ]
         ]

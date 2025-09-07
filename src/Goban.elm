@@ -1,4 +1,4 @@
-module Goban exposing (Color(..), Coords, Goban, Move, allGroups, belongsTo, coordsToPos, currentPlayer, currentSituation, getAdjacentPoints, isAdjacent, placeStone, posToCoords, stoneAt)
+module Goban exposing (Color(..), Coords, Goban, Move, allGroups, belongsTo, coordsToPos, currentPlayer, currentSituation, getAdjacentPoints, isAdjacent, isAlive, numLiberties, placeStone, posToCoords, stoneAt)
 
 import Dict exposing (Dict)
 import Set exposing (Set)
@@ -198,3 +198,8 @@ numLiberties situation group =
         |> Set.foldl (\coords acc -> Set.union acc (getAdjacentPoints situation.gobanSize coords)) Set.empty
         |> Set.filter (\pt -> stoneAt situation pt == Nothing)
         |> Set.size
+
+
+isAlive : Situation -> Group -> Bool
+isAlive situation group =
+    numLiberties situation group > 0

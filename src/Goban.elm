@@ -157,10 +157,22 @@ currentSituation goban =
 applyMove : Move -> Situation -> Situation
 applyMove move situation =
     let
-        currentPlayerGroups =
-            allGroups situation move.color
+        newSituation =
+            { situation | stones = Dict.insert move.coords move.color situation.stones }
+
+        opponentsGroups =
+            allGroups newSituation (opponent move.color)
+
+        capturedGroups =
+            List.filter (\group -> not (isAlive newSituation group)) opponentsGroups
+
+        stonesToRemove =
+            List.concatMap Set.toList capturedGroups
+
+        newStones =
+            List.foldl Dict.remove newSituation.stones stonesToRemove
     in
-    { situation | stones = Dict.insert move.coords move.color situation.stones }
+    { situation | stones = newStones }
 
 
 opponent : Color -> Color

@@ -115,7 +115,8 @@ view model =
                 ]
                 []
              ]
-                ++ (Goban.currentPosition model.goban
+                ++ (Goban.currentSituation model.goban
+                        |> .stones
                         |> Dict.toList
                         |> List.map
                             (\( coords, color ) ->

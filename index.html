@@ -9,7 +9,21 @@
     <div id="elm"></div>
     <script src="elm.js"></script>
     <script>
-      var app = Elm.Main.init({ node: document.getElementById('elm') });
+      var app = Elm.Main.init({ node: document.getElementById('elm'), flags: {} });
+
+      app.ports.downloadFile.subscribe(function({ fileName, fileContent }) {
+        var blob = new Blob([fileContent], { type: "application/x-go-sgf" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 0);
+      });
     </script>
   </body>
 </html>

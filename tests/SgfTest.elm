@@ -22,5 +22,5 @@ all =
     describe "Sgf.toSgf"
         [ test "returns empty string for empty model" <|
             \_ ->
-                Expect.equal "" (toSgf dummyModel)
+                Expect.equal ( "game.sgf", "Hello World!" ) (toSgf dummyModel)
         ]

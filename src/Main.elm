@@ -3,7 +3,7 @@
 -- elm make src/Main.elm --output=elm.js
 
 
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Dict exposing (Dict)
@@ -13,6 +13,10 @@ import Html exposing (Attribute, Html, button, div, form, h1, img, input, label,
 import Html.Attributes exposing (alt, class, src, style, type_)
 import Html.Events exposing (onClick)
 import Json.Decode
+import Sgf exposing (toSgf)
+
+
+port downloadFile : { fileName : String, fileContent : String } -> Cmd msg
 
 
 boardSize : Int
@@ -41,23 +45,30 @@ type Msg
     | UpdateBlackPlayer String
     | GobanClicked ( Int, Int )
     | UndoMove
+    | SaveGame
 
 
+main : Program {} Model Msg
 main =
-    Browser.sandbox
-        { init =
-            { name = ""
-            , whitePlayer = ""
-            , blackPlayer = ""
-            , date = ""
-            , goban = { size = boardSize, moves = [] }
-            }
+    Browser.element
+        { init = \_ -> ( init, Cmd.none )
         , update = update
         , view = view
+        , subscriptions = \_ -> Sub.none
         }
 
 
-update : Msg -> Model -> Model
+init : Model
+init =
+    { name = ""
+    , whitePlayer = ""
+    , blackPlayer = ""
+    , date = ""
+    , goban = { size = boardSize, moves = [] }
+    }
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GobanClicked ( posX, posY ) ->
@@ -68,7 +79,7 @@ update msg model =
                 newGoban =
                     Goban.placeStone model.goban coords
             in
-            Debug.log "Model" { model | goban = newGoban }
+            ( Debug.log "Model" { model | goban = newGoban }, Cmd.none )
 
         UndoMove ->
             let
@@ -88,19 +99,26 @@ update msg model =
                 newGoban =
                     { goban | moves = newMoves }
             in
-            { model | goban = newGoban }
+            ( { model | goban = newGoban }, Cmd.none )
 
         UpdateName name ->
-            { model | name = name }
+            ( { model | name = name }, Cmd.none )
 
         UpdateDate date ->
-            { model | date = date }
+            ( { model | date = date }, Cmd.none )
 
         UpdateWhitePlayer player ->
-            { model | whitePlayer = player }
+            ( { model | whitePlayer = player }, Cmd.none )
 
         UpdateBlackPlayer player ->
-            { model | blackPlayer = player }
+            ( { model | blackPlayer = player }, Cmd.none )
+
+        SaveGame ->
+            let
+                ( fileName, fileContent ) =
+                    toSgf model
+            in
+            ( model, downloadFile { fileName = fileName, fileContent = fileContent } )
 
 
 view : Model -> Html Msg
@@ -120,7 +138,7 @@ view model =
                         ]
                         [ text "<" ]
                     , button [ type_ "button", Html.Attributes.disabled True ] [ text ">" ]
-                    , button [ type_ "button", Html.Attributes.disabled True ] [ text "Save Game" ]
+                    , button [ type_ "button", Html.Events.onClick SaveGame ] [ text "Save Game" ]
                     , button [ type_ "button", Html.Attributes.disabled True ] [ text "Load Game" ]
                     , button [ type_ "button", Html.Attributes.disabled True ] [ text "New Game" ]
                     ]

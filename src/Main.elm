@@ -1,4 +1,4 @@
--- elm-format src/Main.elm --yes
+-- elm-format src/ tests/ --yes
 -- elm-test
 -- elm make src/Main.elm --output=elm.js
 
@@ -7,6 +7,7 @@ module Main exposing (main)
 
 import Browser
 import Dict exposing (Dict)
+import Game exposing (Game)
 import Goban exposing (Goban)
 import Html exposing (Attribute, Html, button, div, form, h1, img, input, label, node, text)
 import Html.Attributes exposing (alt, class, src, style, type_)
@@ -27,15 +28,6 @@ gobanImgSize =
 stoneImgSize : Int
 stoneImgSize =
     35
-
-
-type alias Game =
-    { name : String
-    , whitePlayer : String
-    , blackPlayer : String
-    , date : String
-    , goban : Goban
-    }
 
 
 type alias Model =

@@ -35,7 +35,11 @@ type alias Model =
 
 
 type Msg
-    = GobanClicked ( Int, Int )
+    = UpdateName String
+    | UpdateDate String
+    | UpdateWhitePlayer String
+    | UpdateBlackPlayer String
+    | GobanClicked ( Int, Int )
     | UndoMove
 
 
@@ -86,6 +90,18 @@ update msg model =
             in
             { model | goban = newGoban }
 
+        UpdateName name ->
+            { model | name = name }
+
+        UpdateDate date ->
+            { model | date = date }
+
+        UpdateWhitePlayer player ->
+            { model | whitePlayer = player }
+
+        UpdateBlackPlayer player ->
+            { model | blackPlayer = player }
+
 
 view : Model -> Html Msg
 view model =
@@ -109,12 +125,48 @@ view model =
                     , button [ type_ "button", Html.Attributes.disabled True ] [ text "New Game" ]
                     ]
                 , div [ class "form-row form-row-narrow-gap" ]
-                    [ label [ class "label label-game" ] [ text "Game Name", input [ type_ "text", class "input input-full" ] [] ]
-                    , label [ class "label label-date" ] [ text "Date", input [ type_ "text", class "input input-date-long" ] [] ]
+                    [ label [ class "label label-game" ]
+                        [ text "Game Name"
+                        , input
+                            [ type_ "text"
+                            , class "input input-full"
+                            , Html.Attributes.value model.name
+                            , Html.Events.onInput UpdateName
+                            ]
+                            []
+                        ]
+                    , label [ class "label label-date" ]
+                        [ text "Date"
+                        , input
+                            [ type_ "text"
+                            , class "input input-date-long"
+                            , Html.Attributes.value model.date
+                            , Html.Events.onInput UpdateDate
+                            ]
+                            []
+                        ]
                     ]
                 , div [ class "form-row" ]
-                    [ label [ class "label" ] [ text "White Player", input [ type_ "text", class "input" ] [] ]
-                    , label [ class "label" ] [ text "Black Player", input [ type_ "text", class "input" ] [] ]
+                    [ label [ class "label" ]
+                        [ text "White Player"
+                        , input
+                            [ type_ "text"
+                            , class "input"
+                            , Html.Attributes.value model.whitePlayer
+                            , Html.Events.onInput UpdateWhitePlayer
+                            ]
+                            []
+                        ]
+                    , label [ class "label" ]
+                        [ text "Black Player"
+                        , input
+                            [ type_ "text"
+                            , class "input"
+                            , Html.Attributes.value model.blackPlayer
+                            , Html.Events.onInput UpdateBlackPlayer
+                            ]
+                            []
+                        ]
                     ]
                 ]
             ]

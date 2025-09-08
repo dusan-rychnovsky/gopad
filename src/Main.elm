@@ -44,6 +44,7 @@ type alias Model =
 
 type Msg
     = GobanClicked ( Int, Int )
+    | UndoMove
 
 
 main =
@@ -70,11 +71,28 @@ update msg model =
 
                 newGoban =
                     Goban.placeStone model.goban coords
-
-                newModel =
-                    { model | goban = newGoban }
             in
-            Debug.log "Model" newModel
+            Debug.log "Model" { model | goban = newGoban }
+
+        UndoMove ->
+            let
+                moves =
+                    model.goban.moves
+
+                newMoves =
+                    if List.isEmpty moves then
+                        []
+
+                    else
+                        List.take (List.length moves - 1) moves
+
+                goban =
+                    model.goban
+
+                newGoban =
+                    { goban | moves = newMoves }
+            in
+            { model | goban = newGoban }
 
 
 view : Model -> Html Msg
@@ -84,7 +102,15 @@ view model =
         , div [ class "form-container" ]
             [ form [ class "form" ]
                 [ div [ class "form-row form-row-buttons" ]
-                    [ button [ type_ "button", Html.Attributes.disabled True ] [ text "<" ]
+                    [ button
+                        [ type_ "button"
+                        , if List.isEmpty model.goban.moves then
+                            Html.Attributes.disabled True
+
+                          else
+                            Html.Events.onClick UndoMove
+                        ]
+                        [ text "<" ]
                     , button [ type_ "button", Html.Attributes.disabled True ] [ text ">" ]
                     , button [ type_ "button", Html.Attributes.disabled True ] [ text "Save Game" ]
                     , button [ type_ "button", Html.Attributes.disabled True ] [ text "Load Game" ]

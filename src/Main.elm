@@ -14,6 +14,8 @@ import Html.Attributes exposing (alt, class, src, style, type_)
 import Html.Events exposing (onClick)
 import Json.Decode
 import Sgf exposing (toSgf)
+import Task
+import Time exposing (Posix)
 
 
 port downloadFile : { fileName : String, fileContent : String } -> Cmd msg
@@ -39,7 +41,9 @@ type alias Model =
 
 
 type Msg
-    = UpdateName String
+    = CurrentTime Posix
+    | TimeZone Time.Zone
+    | UpdateName String
     | UpdateDate String
     | UpdateWhitePlayer String
     | UpdateBlackPlayer String
@@ -48,29 +52,42 @@ type Msg
     | SaveGame
 
 
-main : Program {} Model Msg
+main : Program () Model Msg
 main =
     Browser.element
-        { init = \_ -> ( init, Cmd.none )
+        { init = init
         , update = update
         , view = view
         , subscriptions = \_ -> Sub.none
         }
 
 
-init : Model
-init =
-    { name = ""
-    , whitePlayer = ""
-    , blackPlayer = ""
-    , date = ""
-    , goban = { size = boardSize, moves = [] }
-    }
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( { name = ""
+      , whitePlayer = ""
+      , blackPlayer = ""
+      , date = ""
+      , posix = Nothing
+      , timeZone = Nothing
+      , goban = { size = boardSize, moves = [] }
+      }
+    , Cmd.batch
+        [ Task.perform CurrentTime Time.now
+        , Task.perform TimeZone Time.here
+        ]
+    )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        CurrentTime time ->
+            ( { model | posix = Just time }, Cmd.none )
+
+        TimeZone zone ->
+            ( { model | timeZone = Just zone }, Cmd.none )
+
         GobanClicked ( posX, posY ) ->
             let
                 coords =
@@ -158,7 +175,7 @@ view model =
                         , input
                             [ type_ "text"
                             , class "input input-date-long"
-                            , Html.Attributes.value model.date
+                            , Html.Attributes.value (Game.dateStr model)
                             , Html.Events.onInput UpdateDate
                             ]
                             []

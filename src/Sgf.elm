@@ -2,6 +2,7 @@ module Sgf exposing (..)
 
 import Game exposing (Game)
 import Goban exposing (Color(..), Move)
+import Time exposing (Posix)
 
 
 type alias FileName =
@@ -15,11 +16,11 @@ type alias FileContent =
 toSgf : Game -> ( FileName, FileContent )
 toSgf model =
     let
-        header =
+        gameInfo =
             ";FF[4]GM[1]AP[gopad:0.1]GN["
                 ++ model.name
                 ++ "]DT["
-                ++ model.date
+                ++ dateToSgf model
                 ++ "]PB["
                 ++ model.blackPlayer
                 ++ "]PW["
@@ -33,9 +34,18 @@ toSgf model =
                 |> String.join "\n"
 
         content =
-            "(" ++ header ++ "\n" ++ movesToSgf ++ "\n)"
+            "(" ++ gameInfo ++ "\n" ++ movesToSgf ++ "\n)"
     in
     ( "game.sgf", content )
+
+
+
+-- https://www.red-bean.com/sgf/properties.html#DT
+
+
+dateToSgf : Game -> String
+dateToSgf model =
+    Game.dateStr model
 
 
 moveToSgf : Move -> String

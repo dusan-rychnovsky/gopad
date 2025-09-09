@@ -10,8 +10,8 @@ import Dict exposing (Dict)
 import Game exposing (Game)
 import Goban exposing (Goban)
 import Html exposing (Attribute, Html, button, div, form, h1, img, input, label, node, text)
-import Html.Attributes exposing (alt, class, src, style, type_)
-import Html.Events exposing (onClick)
+import Html.Attributes exposing (alt, class, src, style, type_, value, disabled)
+import Html.Events exposing (on, onClick, onInput)
 import Json.Decode
 import Sgf exposing (toSgf)
 import Task
@@ -148,16 +148,16 @@ view model =
                     [ button
                         [ type_ "button"
                         , if List.isEmpty model.goban.moves then
-                            Html.Attributes.disabled True
+                            disabled True
 
                           else
-                            Html.Events.onClick UndoMove
+                            onClick UndoMove
                         ]
                         [ text "<" ]
-                    , button [ type_ "button", Html.Attributes.disabled True ] [ text ">" ]
-                    , button [ type_ "button", Html.Events.onClick SaveGame ] [ text "Save Game" ]
-                    , button [ type_ "button", Html.Attributes.disabled True ] [ text "Load Game" ]
-                    , button [ type_ "button", Html.Attributes.disabled True ] [ text "New Game" ]
+                    , button [ type_ "button", disabled True ] [ text ">" ]
+                    , button [ type_ "button", onClick SaveGame ] [ text "Save Game" ]
+                    , button [ type_ "button", disabled True ] [ text "Load Game" ]
+                    , button [ type_ "button", disabled True ] [ text "New Game" ]
                     ]
                 , div [ class "form-row form-row-narrow-gap" ]
                     [ label [ class "label label-game" ]
@@ -165,8 +165,8 @@ view model =
                         , input
                             [ type_ "text"
                             , class "input input-full"
-                            , Html.Attributes.value model.name
-                            , Html.Events.onInput UpdateName
+                            , value model.name
+                            , onInput UpdateName
                             ]
                             []
                         ]
@@ -175,8 +175,8 @@ view model =
                         , input
                             [ type_ "text"
                             , class "input input-date-long"
-                            , Html.Attributes.value (Game.dateStr model)
-                            , Html.Events.onInput UpdateDate
+                            , value (Game.dateStr model)
+                            , onInput UpdateDate
                             ]
                             []
                         ]
@@ -187,8 +187,8 @@ view model =
                         , input
                             [ type_ "text"
                             , class "input"
-                            , Html.Attributes.value model.whitePlayer
-                            , Html.Events.onInput UpdateWhitePlayer
+                            , value model.whitePlayer
+                            , onInput UpdateWhitePlayer
                             ]
                             []
                         ]
@@ -197,8 +197,8 @@ view model =
                         , input
                             [ type_ "text"
                             , class "input"
-                            , Html.Attributes.value model.blackPlayer
-                            , Html.Events.onInput UpdateBlackPlayer
+                            , value model.blackPlayer
+                            , onInput UpdateBlackPlayer
                             ]
                             []
                         ]
@@ -209,10 +209,10 @@ view model =
             ([ img
                 [ src "public/goban.png"
                 , class "goban-img"
-                , alt "Goban board"
+                , alt "Goban."
                 , style "width" (String.fromInt gobanImgSize ++ "px")
                 , style "height" (String.fromInt gobanImgSize ++ "px")
-                , Html.Events.on "click"
+                , on "click"
                     (Json.Decode.map2 (\x y -> GobanClicked ( x, y ))
                         (Json.Decode.field "offsetX" Json.Decode.int)
                         (Json.Decode.field "offsetY" Json.Decode.int)

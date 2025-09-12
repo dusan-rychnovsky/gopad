@@ -55,6 +55,7 @@ type Msg
     | GobanClicked ( Int, Int )
     | UndoMove
     | SaveGame
+    | NewGame
 
 
 main : Program Encode.Value Model Msg
@@ -76,16 +77,14 @@ init flags =
                     game
 
                 Err _ ->
-                    { name = ""
-                    , whitePlayer = ""
-                    , blackPlayer = ""
-                    , date = ""
-                    , goban = { size = boardSize, moves = [] }
-                    }
+                    Game.emptyGame boardSize
     in
-    ( model
-    , Task.perform (\( posix, zone ) -> InitTime posix zone) (Task.map2 Tuple.pair Time.now Time.here)
-    )
+    ( model, triggerInitTime )
+
+
+triggerInitTime : Cmd Msg
+triggerInitTime =
+    Task.perform (\( posix, zone ) -> InitTime posix zone) (Task.map2 Tuple.pair Time.now Time.here)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -151,6 +150,9 @@ update msg model =
             in
             ( model, downloadFile { fileName = fileName, fileContent = fileContent } )
 
+        NewGame ->
+            ( Game.emptyGame boardSize, triggerInitTime )
+
 
 updateAndStoreState : Msg -> Model -> ( Model, Cmd Msg )
 updateAndStoreState msg oldModel =
@@ -182,7 +184,7 @@ view model =
                     , button [ type_ "button", disabled True ] [ text ">" ]
                     , button [ type_ "button", onClick SaveGame ] [ text "Save Game" ]
                     , button [ type_ "button", disabled True ] [ text "Load Game" ]
-                    , button [ type_ "button", disabled True ] [ text "New Game" ]
+                    , button [ type_ "button", onClick NewGame ] [ text "New Game" ]
                     ]
                 , div [ class "form-row form-row-narrow-gap" ]
                     [ label [ class "label label-game" ]

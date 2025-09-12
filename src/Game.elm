@@ -1,4 +1,4 @@
-module Game exposing (..)
+module Game exposing (Game, emptyGame)
 
 import Goban exposing (Goban)
 
@@ -9,4 +9,14 @@ type alias Game =
     , blackPlayer : String
     , date : String
     , goban : Goban
+    }
+
+
+emptyGame : Int -> Game
+emptyGame boardSize =
+    { name = ""
+    , whitePlayer = ""
+    , blackPlayer = ""
+    , date = ""
+    , goban = { size = boardSize, moves = [] }
     }

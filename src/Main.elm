@@ -13,13 +13,18 @@ import Goban exposing (Goban)
 import Html exposing (Attribute, Html, button, div, form, h1, img, input, label, node, text)
 import Html.Attributes exposing (alt, class, disabled, src, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
-import Json.Decode
+import Json.Decode as Decode
+import Json.Encode as Encode
+import Persist
 import Sgf exposing (toSgf)
 import Task
 import Time exposing (Posix)
 
 
 port downloadFile : { fileName : String, fileContent : String } -> Cmd msg
+
+
+port storeState : Encode.Value -> Cmd msg
 
 
 boardSize : Int
@@ -52,24 +57,33 @@ type Msg
     | SaveGame
 
 
-main : Program () Model Msg
+main : Program Encode.Value Model Msg
 main =
     Browser.element
         { init = init
-        , update = update
+        , update = updateAndStoreState
         , view = view
         , subscriptions = \_ -> Sub.none
         }
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( { name = ""
-      , whitePlayer = ""
-      , blackPlayer = ""
-      , date = ""
-      , goban = { size = boardSize, moves = [] }
-      }
+init : Encode.Value -> ( Model, Cmd Msg )
+init flags =
+    let
+        model =
+            case Decode.decodeValue Persist.decodeGame flags of
+                Ok game ->
+                    game
+
+                Err _ ->
+                    { name = ""
+                    , whitePlayer = ""
+                    , blackPlayer = ""
+                    , date = ""
+                    , goban = { size = boardSize, moves = [] }
+                    }
+    in
+    ( model
     , Task.perform (\( posix, zone ) -> InitTime posix zone) (Task.map2 Tuple.pair Time.now Time.here)
     )
 
@@ -136,6 +150,17 @@ update msg model =
                     toSgf model
             in
             ( model, downloadFile { fileName = fileName, fileContent = fileContent } )
+
+
+updateAndStoreState : Msg -> Model -> ( Model, Cmd Msg )
+updateAndStoreState msg oldModel =
+    let
+        ( newModel, cmds ) =
+            update msg oldModel
+    in
+    ( newModel
+    , Cmd.batch [ storeState (Persist.encodeGame newModel), cmds ]
+    )
 
 
 view : Model -> Html Msg
@@ -213,9 +238,9 @@ view model =
                 , style "width" (String.fromInt gobanImgSize ++ "px")
                 , style "height" (String.fromInt gobanImgSize ++ "px")
                 , on "click"
-                    (Json.Decode.map2 (\x y -> GobanClicked ( x, y ))
-                        (Json.Decode.field "offsetX" Json.Decode.int)
-                        (Json.Decode.field "offsetY" Json.Decode.int)
+                    (Decode.map2 (\x y -> GobanClicked ( x, y ))
+                        (Decode.field "offsetX" Decode.int)
+                        (Decode.field "offsetY" Decode.int)
                     )
                 ]
                 []

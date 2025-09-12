@@ -9,7 +9,11 @@
     <div id="elm"></div>
     <script src="elm.js"></script>
     <script>
-      var app = Elm.Main.init({ node: document.getElementById('elm'), flags: {} });
+      const GOPAD_STATE_KEY = "gopad-state";
+      var storedState = localStorage.getItem(GOPAD_STATE_KEY);
+      var flags = storedState ? JSON.parse(storedState) : {};
+
+      var app = Elm.Main.init({ node: document.getElementById('elm'), flags: flags });
 
       app.ports.downloadFile.subscribe(function({ fileName, fileContent }) {
         var blob = new Blob([fileContent], { type: "application/x-go-sgf" });
@@ -23,6 +27,10 @@
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
         }, 0);
+      });
+
+      app.ports.storeState.subscribe(function(state) {
+        localStorage.setItem(GOPAD_STATE_KEY, JSON.stringify(state));
       });
     </script>
   </body>

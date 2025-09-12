@@ -6,11 +6,12 @@
 port module Main exposing (main)
 
 import Browser
+import DateFormat
 import Dict exposing (Dict)
 import Game exposing (Game)
 import Goban exposing (Goban)
 import Html exposing (Attribute, Html, button, div, form, h1, img, input, label, node, text)
-import Html.Attributes exposing (alt, class, src, style, type_, value, disabled)
+import Html.Attributes exposing (alt, class, disabled, src, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import Json.Decode
 import Sgf exposing (toSgf)
@@ -41,8 +42,7 @@ type alias Model =
 
 
 type Msg
-    = CurrentTime Posix
-    | TimeZone Time.Zone
+    = InitTime Posix Time.Zone
     | UpdateName String
     | UpdateDate String
     | UpdateWhitePlayer String
@@ -68,25 +68,25 @@ init _ =
       , whitePlayer = ""
       , blackPlayer = ""
       , date = ""
-      , posix = Nothing
-      , timeZone = Nothing
       , goban = { size = boardSize, moves = [] }
       }
-    , Cmd.batch
-        [ Task.perform CurrentTime Time.now
-        , Task.perform TimeZone Time.here
-        ]
+    , Task.perform (\( posix, zone ) -> InitTime posix zone) (Task.map2 Tuple.pair Time.now Time.here)
     )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        CurrentTime time ->
-            ( { model | posix = Just time }, Cmd.none )
+        InitTime time zone ->
+            let
+                newDate =
+                    if String.trim model.date == "" then
+                        DateFormat.formatDate time zone
 
-        TimeZone zone ->
-            ( { model | timeZone = Just zone }, Cmd.none )
+                    else
+                        model.date
+            in
+            ( { model | date = newDate }, Cmd.none )
 
         GobanClicked ( posX, posY ) ->
             let
@@ -175,7 +175,7 @@ view model =
                         , input
                             [ type_ "text"
                             , class "input input-date-long"
-                            , value (Game.dateStr model)
+                            , value model.date
                             , onInput UpdateDate
                             ]
                             []

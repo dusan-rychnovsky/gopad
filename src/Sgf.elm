@@ -1,5 +1,7 @@
 module Sgf exposing (..)
 
+-- https://www.red-bean.com/sgf/properties.html
+
 import Game exposing (Game)
 import Goban exposing (Color(..), Move)
 import Time exposing (Posix)
@@ -20,7 +22,7 @@ toSgf model =
             ";FF[4]GM[1]AP[gopad:0.1]GN["
                 ++ model.name
                 ++ "]DT["
-                ++ dateToSgf model
+                ++ model.date
                 ++ "]PB["
                 ++ model.blackPlayer
                 ++ "]PW["
@@ -37,15 +39,6 @@ toSgf model =
             "(" ++ gameInfo ++ "\n" ++ movesToSgf ++ "\n)"
     in
     ( "game.sgf", content )
-
-
-
--- https://www.red-bean.com/sgf/properties.html#DT
-
-
-dateToSgf : Game -> String
-dateToSgf model =
-    Game.dateStr model
 
 
 moveToSgf : Move -> String

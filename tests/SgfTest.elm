@@ -13,8 +13,6 @@ game =
     , whitePlayer = "Alice"
     , blackPlayer = "Bob"
     , date = "2025-09-08 17:05"
-    , posix = Nothing
-    , timeZone = Nothing
     , goban = { size = 19, moves = [] }
     }
 

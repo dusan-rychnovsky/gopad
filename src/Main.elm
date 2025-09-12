@@ -39,7 +39,7 @@ gobanImgSize =
 
 stoneImgSize : Int
 stoneImgSize =
-    35
+    45
 
 
 type alias Model =

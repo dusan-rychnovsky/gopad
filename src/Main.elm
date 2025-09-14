@@ -112,24 +112,7 @@ update msg model =
             ( Debug.log "Model" { model | goban = newGoban }, Cmd.none )
 
         UndoMove ->
-            let
-                moves =
-                    model.goban.moves
-
-                newMoves =
-                    if List.isEmpty moves then
-                        []
-
-                    else
-                        List.take (List.length moves - 1) moves
-
-                goban =
-                    model.goban
-
-                newGoban =
-                    { goban | moves = newMoves }
-            in
-            ( { model | goban = newGoban }, Cmd.none )
+            ( { model | goban = Goban.undoMove model.goban }, Cmd.none )
 
         UpdateName name ->
             ( { model | name = name }, Cmd.none )

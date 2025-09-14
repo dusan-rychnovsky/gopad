@@ -114,6 +114,19 @@ placeStone goban coords =
     { goban | moves = goban.moves ++ [ newMove ] }
 
 
+undoMove : Goban -> Goban
+undoMove goban =
+    let
+        newMoves =
+            if List.isEmpty goban.moves then
+                []
+
+            else
+                List.take (List.length goban.moves - 1) goban.moves
+    in
+    { goban | moves = newMoves }
+
+
 currentPlayer : Goban -> Color
 currentPlayer goban =
     case List.head (List.reverse goban.moves) of

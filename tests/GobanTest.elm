@@ -479,6 +479,30 @@ all =
                     in
                     Expect.equal (isAlive situation group) False
             ]
+        , describe "undoMove"
+            [ test "on empty goban does nothing" <|
+                \_ ->
+                    let
+                        goban = Goban 19 []
+                    in
+                    Expect.equal (undoMove goban) goban
+
+            , test "removes the last move" <|
+                \_ ->
+                    let
+                        move1 = { color = Black, coords = (3, 4) }
+                        move2 = { color = White, coords = (5, 3) }
+                        goban = Goban 19 [ move1, move2 ]
+                    in
+                    Expect.equal (undoMove goban) (Goban 19 [ move1 ])
+
+            , test "on goban with one move results in empty board" <|
+                \_ ->
+                    let
+                        goban = Goban 19 [ { color = Black, coords = (3, 3) } ]
+                    in
+                    Expect.equal (undoMove goban) (Goban 19 [])
+            ]
         , describe "opponent"
             [ test "opponent of Black is White" <|
                 \_ ->

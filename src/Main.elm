@@ -3,8 +3,9 @@
 -- elm make src/Main.elm --output=elm.js
 
 
-port module Main exposing (main)
+port module Main exposing (gameHistoryContent, main)
 
+import Array exposing (Array)
 import Browser
 import DateFormat
 import Dict exposing (Dict)
@@ -34,12 +35,22 @@ boardSize =
 
 gobanImgSize : Int
 gobanImgSize =
-    900
+    695
 
 
 stoneImgSize : Int
 stoneImgSize =
-    45
+    33
+
+
+gameHistoryTextAreaSize : { width : Int, height : Int }
+gameHistoryTextAreaSize =
+    { width = 100, height = gobanImgSize }
+
+
+pageWidth : Int
+pageWidth =
+    gobanImgSize + 5 + gameHistoryTextAreaSize.width
 
 
 type alias Model =
@@ -152,7 +163,7 @@ view : Model -> Html Msg
 view model =
     div [ class "gopad" ]
         [ h1 [ class "header" ] [ text "GOPAD" ]
-        , div [ class "form-container" ]
+        , div [ class "form-container", style "width" (String.fromInt pageWidth ++ "px") ]
             [ form [ class "form" ]
                 [ div [ class "form-row form-row-buttons" ]
                     [ button
@@ -215,50 +226,80 @@ view model =
                     ]
                 ]
             ]
-        , div [ style "position" "relative", style "width" (String.fromInt gobanImgSize ++ "px"), style "height" (String.fromInt gobanImgSize ++ "px") ]
-            ([ img
-                [ src "public/goban.png"
-                , class "goban-img"
-                , alt "Goban."
-                , style "width" (String.fromInt gobanImgSize ++ "px")
-                , style "height" (String.fromInt gobanImgSize ++ "px")
-                , on "click"
-                    (Decode.map2 (\x y -> GobanClicked ( x, y ))
-                        (Decode.field "offsetX" Decode.int)
-                        (Decode.field "offsetY" Decode.int)
-                    )
+        , div [ class "game-history-container" ]
+            [ div [ style "position" "relative", style "width" (String.fromInt gobanImgSize ++ "px"), style "height" (String.fromInt gobanImgSize ++ "px") ]
+                ([ img
+                    [ src "public/goban.png"
+                    , class "goban-img"
+                    , alt "Goban."
+                    , style "width" (String.fromInt gobanImgSize ++ "px")
+                    , style "height" (String.fromInt gobanImgSize ++ "px")
+                    , on "click"
+                        (Decode.map2 (\x y -> GobanClicked ( x, y ))
+                            (Decode.field "offsetX" Decode.int)
+                            (Decode.field "offsetY" Decode.int)
+                        )
+                    ]
+                    []
+                 ]
+                    ++ (Goban.currentSituation model.goban
+                            |> .stones
+                            |> Dict.toList
+                            |> List.map
+                                (\( coords, color ) ->
+                                    let
+                                        ( posX, posY ) =
+                                            Goban.coordsToPos model.goban coords gobanImgSize
+
+                                        stoneSrc =
+                                            case color of
+                                                Goban.Black ->
+                                                    "public/black-stone.png"
+
+                                                Goban.White ->
+                                                    "public/white-stone.png"
+                                    in
+                                    img
+                                        [ src stoneSrc
+                                        , alt "stone"
+                                        , style "position" "absolute"
+                                        , style "left" (String.fromInt (posX - stoneImgSize // 2) ++ "px")
+                                        , style "top" (String.fromInt (posY - stoneImgSize // 2) ++ "px")
+                                        , style "width" (String.fromInt stoneImgSize ++ "px")
+                                        , style "height" (String.fromInt stoneImgSize ++ "px")
+                                        , style "pointer-events" "none"
+                                        ]
+                                        []
+                                )
+                       )
+                )
+            , Html.textarea
+                [ Html.Attributes.class "game-history-textarea"
+                , Html.Attributes.style "height" (String.fromInt gameHistoryTextAreaSize.height ++ "px")
+                , Html.Attributes.style "width" (String.fromInt gameHistoryTextAreaSize.width ++ "px")
+                , Html.Attributes.readonly True
+                , Html.Attributes.value (gameHistoryContent model.goban)
                 ]
                 []
-             ]
-                ++ (Goban.currentSituation model.goban
-                        |> .stones
-                        |> Dict.toList
-                        |> List.map
-                            (\( coords, color ) ->
-                                let
-                                    ( posX, posY ) =
-                                        Goban.coordsToPos model.goban coords gobanImgSize
-
-                                    stoneSrc =
-                                        case color of
-                                            Goban.Black ->
-                                                "public/black-stone.png"
-
-                                            Goban.White ->
-                                                "public/white-stone.png"
-                                in
-                                img
-                                    [ src stoneSrc
-                                    , alt "stone"
-                                    , style "position" "absolute"
-                                    , style "left" (String.fromInt (posX - stoneImgSize // 2) ++ "px")
-                                    , style "top" (String.fromInt (posY - stoneImgSize // 2) ++ "px")
-                                    , style "width" (String.fromInt stoneImgSize ++ "px")
-                                    , style "height" (String.fromInt stoneImgSize ++ "px")
-                                    , style "pointer-events" "none"
-                                    ]
-                                    []
-                            )
-                   )
-            )
+            ]
         ]
+
+
+gameHistoryContent : Goban -> String
+gameHistoryContent goban =
+    let
+        moves =
+            goban.moves
+                |> Array.toList
+                |> List.indexedMap
+                    (\i move ->
+                        String.padLeft 2 '0' (String.fromInt (i + 1)) ++ Sgf.moveToSgf move
+                    )
+    in
+    "GAME:\n-----"
+        ++ (if List.isEmpty moves then
+                ""
+
+            else
+                "\n" ++ String.join "\n" moves
+           )

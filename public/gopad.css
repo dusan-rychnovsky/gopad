@@ -7,12 +7,11 @@
 }
 
 .header {
-  font-size: 3em;
+  font-size: 2.5em;
   margin-bottom: 15px;
 }
 
 .form-container {
-  width: min(900px, 90vw);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -22,9 +21,9 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
   background: #fff;
-  padding: 24px;
+  padding: 15px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
@@ -48,7 +47,7 @@
   display: flex;
   align-items: center;
   flex: 1;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 500;
   color: #333;
   letter-spacing: 0.01em;
@@ -68,11 +67,11 @@
 .input {
   margin-left: 8px;
   flex: 1;
-  padding: 8px 12px;
+  padding: 4px 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 1.08rem;
-  height: 2.2em;
+  font-size: 0.95rem;
+  height: 2em;
   box-sizing: border-box;
   background: #fafbfc;
   transition: border 0.2s;
@@ -96,8 +95,8 @@
 }
 
 button {
-  font-size: 1.1rem;
-  padding: 8px 18px;
+  font-size: 1rem;
+  padding: 4px 10px;
 }
 
 .goban-img {
@@ -105,4 +104,29 @@ button {
   margin: 0 auto 0 auto;
   max-width: 100vw;
   box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+}
+
+.game-history-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.game-history-textarea {
+  resize: none;
+  font-size: 1rem;
+  font-family: monospace;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 5px;
+  box-sizing: border-box;
+  background: #fff;
+  overflow-y: scroll;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.game-history-textarea:focus {
+  border: 1.5px solid #888;
 }

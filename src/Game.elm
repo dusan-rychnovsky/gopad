@@ -18,5 +18,5 @@ emptyGame boardSize =
     , whitePlayer = ""
     , blackPlayer = ""
     , date = ""
-    , goban = { size = boardSize, moves = [] }
+    , goban = Goban.empty boardSize
     }

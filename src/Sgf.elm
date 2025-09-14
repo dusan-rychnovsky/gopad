@@ -2,6 +2,7 @@ module Sgf exposing (..)
 
 -- https://www.red-bean.com/sgf/properties.html
 
+import Array exposing (Array)
 import Game exposing (Game)
 import Goban exposing (Color(..), Move)
 import Time exposing (Posix)
@@ -32,7 +33,9 @@ toSgf model =
                 ++ "]KM[6.5]"
 
         movesToSgf =
-            List.map moveToSgf model.goban.moves
+            model.goban.moves
+                |> Array.map moveToSgf
+                |> Array.toList
                 |> String.join "\n"
 
         content =

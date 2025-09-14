@@ -1,5 +1,6 @@
 module Persist exposing (decodeGame, encodeGame)
 
+import Array exposing (Array)
 import Game exposing (Game)
 import Goban exposing (Color(..), Coords, Goban, Move)
 import Json.Decode as Decode exposing (Decoder)
@@ -92,7 +93,7 @@ encodeGoban : Goban -> Encode.Value
 encodeGoban goban =
     Encode.object
         [ ( "size", Encode.int goban.size )
-        , ( "moves", Encode.list encodeMove goban.moves )
+        , ( "moves", Encode.list encodeMove (Array.toList goban.moves) )
         ]
 
 
@@ -100,4 +101,4 @@ decodeGoban : Decode.Decoder Goban
 decodeGoban =
     Decode.map2 Goban
         (Decode.field "size" Decode.int)
-        (Decode.field "moves" (Decode.list decodeMove))
+        (Decode.field "moves" (Decode.list decodeMove |> Decode.map Array.fromList))

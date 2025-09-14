@@ -1,5 +1,6 @@
 module PersistTest exposing (suite)
 
+import Array exposing (Array)
 import Expect
 import Game exposing (..)
 import Goban exposing (..)
@@ -18,9 +19,10 @@ game =
     , goban =
         { size = 9
         , moves =
-            [ { color = Black, coords = ( 1, 1 ) }
-            , { color = White, coords = ( 2, 2 ) }
-            ]
+            Array.fromList
+                [ { color = Black, coords = ( 1, 1 ) }
+                , { color = White, coords = ( 2, 2 ) }
+                ]
         }
     }
 

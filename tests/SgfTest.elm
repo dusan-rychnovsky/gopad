@@ -1,5 +1,6 @@
 module SgfTest exposing (all)
 
+import Array exposing (Array)
 import Expect
 import Game exposing (..)
 import Goban exposing (..)
@@ -13,7 +14,7 @@ game =
     , whitePlayer = "Alice"
     , blackPlayer = "Bob"
     , date = "2025-09-08 17:05"
-    , goban = { size = 19, moves = [] }
+    , goban = Goban.empty 19
     }
 
 
@@ -33,12 +34,12 @@ all =
                     ( "game.sgf"
                     , "(;FF[4]GM[1]AP[gopad:0.1]GN[Test Game]DT[2025-09-08 17:05]PB[Bob]PW[Alice]SZ[19]KM[6.5]\n;B[dq]\n)"
                     )
-                    (toSgf { game | goban = { size = 19, moves = [ { color = Black, coords = ( 16, 3 ) } ] } })
+                    (toSgf { game | goban = { size = 19, moves = Array.fromList [ { color = Black, coords = ( 16, 3 ) } ] } })
         , test "a game with one black and one white move" <|
             \_ ->
                 Expect.equal
                     ( "game.sgf"
                     , "(;FF[4]GM[1]AP[gopad:0.1]GN[Test Game]DT[2025-09-08 17:05]PB[Bob]PW[Alice]SZ[19]KM[6.5]\n;B[dq]\n;W[dd]\n)"
                     )
-                    (toSgf { game | goban = { size = 19, moves = [ { color = Black, coords = ( 16, 3 ) }, { color = White, coords = ( 3, 3 ) } ] } })
+                    (toSgf { game | goban = { size = 19, moves = Array.fromList [ { color = Black, coords = ( 16, 3 ) }, { color = White, coords = ( 3, 3 ) } ] } })
         ]

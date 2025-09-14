@@ -157,7 +157,7 @@ view model =
                 [ div [ class "form-row form-row-buttons" ]
                     [ button
                         [ type_ "button"
-                        , if List.isEmpty model.goban.moves then
+                        , if Goban.isEmpty model.goban then
                             disabled True
 
                           else

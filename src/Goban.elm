@@ -1,12 +1,13 @@
 module Goban exposing (..)
 
+import Array exposing (Array)
 import Dict exposing (Dict)
 import Set exposing (Set)
 
 
 type alias Goban =
     { size : Int
-    , moves : List Move
+    , moves : Array Move
     }
 
 
@@ -49,6 +50,18 @@ gobanImg =
     , squarePx = 99.0
     , linePx = 5.0
     }
+
+
+empty : Int -> Goban
+empty size =
+    { size = size
+    , moves = Array.empty
+    }
+
+
+isEmpty : Goban -> Bool
+isEmpty goban =
+    Array.isEmpty goban.moves
 
 
 posToCoords : Goban -> Int -> Int -> Int -> Coords
@@ -111,25 +124,17 @@ placeStone goban coords =
             , coords = coords
             }
     in
-    { goban | moves = goban.moves ++ [ newMove ] }
+    { goban | moves = Array.push newMove goban.moves }
 
 
 undoMove : Goban -> Goban
 undoMove goban =
-    let
-        newMoves =
-            if List.isEmpty goban.moves then
-                []
-
-            else
-                List.take (List.length goban.moves - 1) goban.moves
-    in
-    { goban | moves = newMoves }
+    { goban | moves = Array.slice 0 (Array.length goban.moves - 1) goban.moves }
 
 
 currentPlayer : Goban -> Color
 currentPlayer goban =
-    case List.head (List.reverse goban.moves) of
+    case Array.get (Array.length goban.moves - 1) goban.moves of
         Just lastMove ->
             opponent lastMove.color
 
@@ -164,7 +169,7 @@ belongsTo gobanSize group coords =
 
 currentSituation : Goban -> Situation
 currentSituation goban =
-    List.foldl applyMove { gobanSize = goban.size, stones = Dict.empty } goban.moves
+    Array.foldl applyMove { gobanSize = goban.size, stones = Dict.empty } goban.moves
 
 
 applyMove : Move -> Situation -> Situation

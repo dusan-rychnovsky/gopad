@@ -2,7 +2,7 @@ module Persist exposing (decodeGame, encodeGame)
 
 import Array exposing (Array)
 import Game exposing (Game)
-import Goban exposing (Color(..), Coords, Goban, Move)
+import Goban.Types as Goban exposing (Goban)
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode exposing (Value)
 
@@ -28,39 +28,39 @@ decodeGame =
         (Decode.field "goban" decodeGoban)
 
 
-encodeColor : Color -> Encode.Value
+encodeColor : Goban.Color -> Encode.Value
 encodeColor color =
     case color of
-        White ->
+        Goban.White ->
             Encode.string "White"
 
-        Black ->
+        Goban.Black ->
             Encode.string "Black"
 
 
-decodeColor : Decode.Decoder Color
+decodeColor : Decode.Decoder Goban.Color
 decodeColor =
     Decode.string
         |> Decode.andThen
             (\str ->
                 case str of
                     "White" ->
-                        Decode.succeed White
+                        Decode.succeed Goban.White
 
                     "Black" ->
-                        Decode.succeed Black
+                        Decode.succeed Goban.Black
 
                     _ ->
                         Decode.fail ("Unknown color: " ++ str)
             )
 
 
-encodeCoords : Coords -> Encode.Value
+encodeCoords : Goban.Coords -> Encode.Value
 encodeCoords ( row, col ) =
     Encode.list Encode.int [ row, col ]
 
 
-decodeCoords : Decode.Decoder Coords
+decodeCoords : Decode.Decoder Goban.Coords
 decodeCoords =
     Decode.list Decode.int
         |> Decode.andThen
@@ -74,7 +74,7 @@ decodeCoords =
             )
 
 
-encodeMove : Move -> Encode.Value
+encodeMove : Goban.Move -> Encode.Value
 encodeMove move =
     Encode.object
         [ ( "color", encodeColor move.color )
@@ -82,9 +82,9 @@ encodeMove move =
         ]
 
 
-decodeMove : Decode.Decoder Move
+decodeMove : Decode.Decoder Goban.Move
 decodeMove =
-    Decode.map2 Move
+    Decode.map2 Goban.Move
         (Decode.field "color" decodeColor)
         (Decode.field "coords" decodeCoords)
 

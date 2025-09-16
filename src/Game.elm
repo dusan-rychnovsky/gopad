@@ -1,6 +1,7 @@
 module Game exposing (Game, emptyGame)
 
-import Goban exposing (Goban)
+import Goban
+import Goban.Types exposing (Goban)
 
 
 type alias Game =

@@ -10,7 +10,8 @@ import Browser
 import DateFormat
 import Dict exposing (Dict)
 import Game exposing (Game)
-import Goban exposing (Goban)
+import Goban
+import Goban.Types as Goban exposing (Goban)
 import Html exposing (Attribute, Html, button, div, form, h1, img, input, label, node, text)
 import Html.Attributes exposing (alt, class, disabled, src, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
@@ -115,7 +116,7 @@ update msg model =
         GobanClicked ( posX, posY ) ->
             let
                 coords =
-                    Goban.posToCoords model.goban posX posY gobanImgSize
+                    Goban.posToCoords model.goban.size posX posY gobanImgSize
 
                 newGoban =
                     Goban.placeStone model.goban coords
@@ -249,7 +250,7 @@ view model =
                                 (\( coords, color ) ->
                                     let
                                         ( posX, posY ) =
-                                            Goban.coordsToPos model.goban coords gobanImgSize
+                                            Goban.coordsToPos coords gobanImgSize
 
                                         stoneSrc =
                                             case color of

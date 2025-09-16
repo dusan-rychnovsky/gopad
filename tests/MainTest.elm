@@ -4,6 +4,7 @@ import Array
 import Expect
 import Game
 import Goban
+import Goban.Types as Goban
 import Main exposing (gameHistoryContent)
 import Test exposing (..)
 

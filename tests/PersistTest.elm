@@ -3,7 +3,7 @@ module PersistTest exposing (suite)
 import Array exposing (Array)
 import Expect
 import Game exposing (..)
-import Goban exposing (..)
+import Goban.Types as Goban
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Persist exposing (decodeGame, encodeGame)
@@ -20,8 +20,8 @@ game =
         { size = 9
         , moves =
             Array.fromList
-                [ { color = Black, coords = ( 1, 1 ) }
-                , { color = White, coords = ( 2, 2 ) }
+                [ { color = Goban.Black, coords = ( 1, 1 ) }
+                , { color = Goban.White, coords = ( 2, 2 ) }
                 ]
         }
     }

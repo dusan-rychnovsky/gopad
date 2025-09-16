@@ -4,8 +4,7 @@ module Sgf exposing (..)
 
 import Array exposing (Array)
 import Game exposing (Game)
-import Goban exposing (Color(..), Move)
-import Time exposing (Posix)
+import Goban.Types as Goban
 
 
 type alias FileName =
@@ -44,7 +43,7 @@ toSgf model =
     ( "game.sgf", content )
 
 
-moveToSgf : Move -> String
+moveToSgf : Goban.Move -> String
 moveToSgf move =
     let
         coordsCode n =
@@ -52,10 +51,10 @@ moveToSgf move =
 
         colorCode color =
             case color of
-                Black ->
+                Goban.Black ->
                     "B"
 
-                White ->
+                Goban.White ->
                     "W"
 
         ( row, col ) =

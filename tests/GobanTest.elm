@@ -4,6 +4,8 @@ import Array exposing (Array)
 import Dict exposing (Dict)
 import Expect
 import Goban exposing (..)
+import Goban.Internal exposing (..)
+import Goban.Types exposing (..)
 import Set exposing (Set)
 import Test exposing (..)
 
@@ -26,15 +28,15 @@ all =
              in
              [ test "center of board" <|
                 \_ ->
-                    Expect.equal (coordsToPos emptyGoban ( 9, 9 ) imgSize)
+                    Expect.equal (coordsToPos ( 9, 9 ) imgSize)
                         ( scale 996, scale 996 )
              , test "top-left corner" <|
                 \_ ->
-                    Expect.equal (coordsToPos emptyGoban ( 0, 0 ) imgSize)
+                    Expect.equal (coordsToPos ( 0, 0 ) imgSize)
                         ( scale 60, scale 60 )
              , test "bottom-right corner" <|
                 \_ ->
-                    Expect.equal (coordsToPos emptyGoban ( 18, 18 ) imgSize)
+                    Expect.equal (coordsToPos ( 18, 18 ) imgSize)
                         ( scale 1932, scale 1932 )
              ]
             )
@@ -48,23 +50,23 @@ all =
              in
              [ test "center of board (should be (9,9))" <|
                 \_ ->
-                    Expect.equal (posToCoords emptyGoban (scale 1000) (scale 1000) imgSize) ( 9, 9 )
+                    Expect.equal (posToCoords 19 (scale 1000) (scale 1000) imgSize) ( 9, 9 )
              , test "top-left corner (should be (0,0))" <|
                 \_ ->
-                    Expect.equal (posToCoords emptyGoban (scale 60) (scale 60) imgSize) ( 0, 0 )
+                    Expect.equal (posToCoords 19 (scale 60) (scale 60) imgSize) ( 0, 0 )
              , test "bottom-right corner (should be (18,18))" <|
                 \_ ->
                     let
                         px =
                             scale (2000 - 60)
                     in
-                    Expect.equal (posToCoords emptyGoban px px imgSize) ( 18, 18 )
+                    Expect.equal (posToCoords 19 px px imgSize) ( 18, 18 )
              , test "outside top-left clamps to (0,0)" <|
                 \_ ->
-                    Expect.equal (posToCoords emptyGoban 0 0 imgSize) ( 0, 0 )
+                    Expect.equal (posToCoords 19 0 0 imgSize) ( 0, 0 )
              , test "outside bottom-right clamps to (18,18)" <|
                 \_ ->
-                    Expect.equal (posToCoords emptyGoban (scale 2000) (scale 2000) imgSize) ( 18, 18 )
+                    Expect.equal (posToCoords 19 (scale 2000) (scale 2000) imgSize) ( 18, 18 )
              ]
             )
         , describe "currentPlayer"

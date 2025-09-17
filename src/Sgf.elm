@@ -5,6 +5,7 @@ module Sgf exposing (..)
 import Array exposing (Array)
 import Game exposing (Game)
 import Goban.Types as Goban
+import StringUtils
 
 
 type alias FileName =
@@ -16,23 +17,23 @@ type alias FileContent =
 
 
 toSgf : Game -> ( FileName, FileContent )
-toSgf model =
+toSgf game =
     let
         gameInfo =
             ";FF[4]GM[1]AP[gopad:0.1]GN["
-                ++ model.name
+                ++ Game.name game
                 ++ "]DT["
-                ++ model.date
+                ++ game.date
                 ++ "]PB["
-                ++ model.blackPlayer
+                ++ game.blackPlayer
                 ++ "]PW["
-                ++ model.whitePlayer
+                ++ game.whitePlayer
                 ++ "]SZ["
-                ++ String.fromInt model.goban.size
+                ++ String.fromInt game.goban.size
                 ++ "]KM[6.5]"
 
         movesToSgf =
-            model.goban.moves
+            game.goban.moves
                 |> Array.map moveToSgf
                 |> Array.toList
                 |> String.join "\n"
@@ -40,7 +41,21 @@ toSgf model =
         content =
             "(" ++ gameInfo ++ "\n" ++ movesToSgf ++ "\n)"
     in
-    ( "game.sgf", content )
+    ( fileName game, content )
+
+
+fileName : Game -> String
+fileName game =
+    let
+        name =
+            [ game.date, game.blackPlayer, game.whitePlayer, game.location ]
+                |> StringUtils.joinTrimmed "-"
+    in
+    if name == "" then
+        "game.sgf"
+
+    else
+        name ++ ".sgf"
 
 
 moveToSgf : Goban.Move -> String

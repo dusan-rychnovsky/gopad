@@ -1,23 +1,30 @@
-module Game exposing (Game, emptyGame)
+module Game exposing (Game, emptyGame, name)
 
 import Goban
 import Goban.Types exposing (Goban)
+import StringUtils
 
 
 type alias Game =
-    { name : String
-    , whitePlayer : String
+    { date : String
     , blackPlayer : String
-    , date : String
+    , whitePlayer : String
+    , location : String
     , goban : Goban
     }
 
 
 emptyGame : Int -> Game
 emptyGame boardSize =
-    { name = ""
-    , whitePlayer = ""
+    { date = ""
     , blackPlayer = ""
-    , date = ""
+    , whitePlayer = ""
+    , location = ""
     , goban = Goban.empty boardSize
     }
+
+
+name : Game -> String
+name game =
+    [ game.date, game.blackPlayer, game.whitePlayer, game.location ]
+        |> StringUtils.joinTrimmed " "

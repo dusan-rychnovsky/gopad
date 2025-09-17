@@ -60,7 +60,7 @@ type alias Model =
 
 type Msg
     = InitTime Posix Time.Zone
-    | UpdateName String
+    | UpdateLocation String
     | UpdateDate String
     | UpdateWhitePlayer String
     | UpdateBlackPlayer String
@@ -126,17 +126,17 @@ update msg model =
         UndoMove ->
             ( { model | goban = Goban.undoMove model.goban }, Cmd.none )
 
-        UpdateName name ->
-            ( { model | name = name }, Cmd.none )
-
         UpdateDate date ->
             ( { model | date = date }, Cmd.none )
+
+        UpdateBlackPlayer player ->
+            ( { model | blackPlayer = player }, Cmd.none )
 
         UpdateWhitePlayer player ->
             ( { model | whitePlayer = player }, Cmd.none )
 
-        UpdateBlackPlayer player ->
-            ( { model | blackPlayer = player }, Cmd.none )
+        UpdateLocation location ->
+            ( { model | location = location }, Cmd.none )
 
         SaveGame ->
             let
@@ -182,45 +182,43 @@ view model =
                     , button [ type_ "button", onClick NewGame ] [ text "New Game" ]
                     ]
                 , div [ class "form-row form-row-narrow-gap" ]
-                    [ label [ class "label label-game" ]
-                        [ text "Game Name"
-                        , input
-                            [ type_ "text"
-                            , class "input input-full"
-                            , value model.name
-                            , onInput UpdateName
-                            ]
-                            []
-                        ]
-                    , label [ class "label label-date" ]
+                    [ label [ class "label label-date" ]
                         [ text "Date"
                         , input
                             [ type_ "text"
-                            , class "input input-date-long"
+                            , class "input input-date"
                             , value model.date
                             , onInput UpdateDate
                             ]
                             []
                         ]
-                    ]
-                , div [ class "form-row" ]
-                    [ label [ class "label" ]
-                        [ text "White Player"
+                    , label [ class "label label-black" ]
+                        [ text "Black"
                         , input
                             [ type_ "text"
-                            , class "input"
+                            , class "input input-black"
+                            , value model.blackPlayer
+                            , onInput UpdateBlackPlayer
+                            ]
+                            []
+                        ]
+                    , label [ class "label label-white" ]
+                        [ text "White"
+                        , input
+                            [ type_ "text"
+                            , class "input input-white"
                             , value model.whitePlayer
                             , onInput UpdateWhitePlayer
                             ]
                             []
                         ]
-                    , label [ class "label" ]
-                        [ text "Black Player"
+                    , label [ class "label label-location" ]
+                        [ text "Location"
                         , input
                             [ type_ "text"
-                            , class "input"
-                            , value model.blackPlayer
-                            , onInput UpdateBlackPlayer
+                            , class "input input-location"
+                            , value model.location
+                            , onInput UpdateLocation
                             ]
                             []
                         ]

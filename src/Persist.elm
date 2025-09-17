@@ -10,10 +10,10 @@ import Json.Encode as Encode exposing (Value)
 encodeGame : Game -> Encode.Value
 encodeGame game =
     Encode.object
-        [ ( "name", Encode.string game.name )
-        , ( "whitePlayer", Encode.string game.whitePlayer )
+        [ ( "date", Encode.string game.date )
         , ( "blackPlayer", Encode.string game.blackPlayer )
-        , ( "date", Encode.string game.date )
+        , ( "whitePlayer", Encode.string game.whitePlayer )
+        , ( "location", Encode.string game.location )
         , ( "goban", encodeGoban game.goban )
         ]
 
@@ -21,10 +21,10 @@ encodeGame game =
 decodeGame : Decode.Decoder Game
 decodeGame =
     Decode.map5 Game
-        (Decode.field "name" Decode.string)
-        (Decode.field "whitePlayer" Decode.string)
-        (Decode.field "blackPlayer" Decode.string)
         (Decode.field "date" Decode.string)
+        (Decode.field "blackPlayer" Decode.string)
+        (Decode.field "whitePlayer" Decode.string)
+        (Decode.field "location" Decode.string)
         (Decode.field "goban" decodeGoban)
 
 

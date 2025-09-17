@@ -12,10 +12,10 @@ import Test exposing (..)
 
 game : Game
 game =
-    { name = "Test Game"
-    , whitePlayer = "Alice"
+    { date = "2025-09-12"
     , blackPlayer = "Bob"
-    , date = "2025-09-12"
+    , whitePlayer = "Alice"
+    , location = "Wonderland"
     , goban =
         { size = 9
         , moves =

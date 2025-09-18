@@ -15,7 +15,7 @@ Your browser's `Local Storage` is used to automatically preserve application sta
 
 An example screenshot:
 <p align="center">
-  <img width="412" height="447" alt="image" src="https://github.com/user-attachments/assets/7d3a82e3-5132-4b9c-a0ad-be9853a4fb41" />
+  <img width="415" height="445" alt="image" src="https://github.com/user-attachments/assets/3df7fc3c-f887-4c79-b5e8-13b8ed5256ff" />
 </p>
 
 ## How To

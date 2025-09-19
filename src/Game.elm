@@ -10,16 +10,17 @@ type alias Game =
     , blackPlayer : String
     , whitePlayer : String
     , location : String
+    , placingHandicapMode : Bool
     , goban : Goban
     }
 
 
-emptyGame : Int -> Game
 emptyGame boardSize =
     { date = ""
     , blackPlayer = ""
     , whitePlayer = ""
     , location = ""
+    , placingHandicapMode = False
     , goban = Goban.empty boardSize
     }
 

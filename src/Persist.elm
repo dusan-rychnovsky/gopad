@@ -14,17 +14,19 @@ encodeGame game =
         , ( "blackPlayer", Encode.string game.blackPlayer )
         , ( "whitePlayer", Encode.string game.whitePlayer )
         , ( "location", Encode.string game.location )
+        , ( "placingHandicapMode", Encode.bool game.placingHandicapMode )
         , ( "goban", encodeGoban game.goban )
         ]
 
 
 decodeGame : Decode.Decoder Game
 decodeGame =
-    Decode.map5 Game
+    Decode.map6 Game
         (Decode.field "date" Decode.string)
         (Decode.field "blackPlayer" Decode.string)
         (Decode.field "whitePlayer" Decode.string)
         (Decode.field "location" Decode.string)
+        (Decode.field "placingHandicapMode" Decode.bool)
         (Decode.field "goban" decodeGoban)
 
 

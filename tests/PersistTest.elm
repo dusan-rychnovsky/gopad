@@ -16,6 +16,7 @@ game =
     , blackPlayer = "Bob"
     , whitePlayer = "Alice"
     , location = "Wonderland"
+    , placingHandicapMode = True
     , goban =
         { size = 9
         , moves =

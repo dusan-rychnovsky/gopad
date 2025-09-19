@@ -1,4 +1,4 @@
-module Goban exposing (coordsToPos, currentSituation, empty, isEmpty, placeStone, posToCoords, undoMove)
+module Goban exposing (coordsToPos, currentSituation, empty, isEmpty, placeHandicapStone, placeStone, posToCoords, undoMove)
 
 import Array exposing (Array)
 import Dict exposing (Dict)
@@ -84,6 +84,17 @@ placeStone goban coords =
     let
         newMove =
             { color = currentPlayer goban
+            , coords = coords
+            }
+    in
+    { goban | moves = Array.push newMove goban.moves }
+
+
+placeHandicapStone : Goban -> Coords -> Goban
+placeHandicapStone goban coords =
+    let
+        newMove =
+            { color = Black
             , coords = coords
             }
     in

@@ -136,4 +136,27 @@ all =
                     in
                     Expect.equal (undoMove goban) emptyGoban
             ]
+        , describe "placeHandicapStone"
+            [ test "two handicap and a regular move" <|
+                \_ ->
+                    let
+                        goban0 =
+                            empty 19
+
+                        goban1 =
+                            placeHandicapStone goban0 ( 3, 3 )
+
+                        goban2 =
+                            placeHandicapStone goban1 ( 3, 15 )
+
+                        goban3 =
+                            placeStone goban2 ( 15, 3 )
+                    in
+                    Expect.equal
+                        [ { color = Black, coords = ( 3, 3 ) }
+                        , { color = Black, coords = ( 3, 15 ) }
+                        , { color = White, coords = ( 15, 3 ) }
+                        ]
+                        (Array.toList goban3.moves)
+            ]
         ]

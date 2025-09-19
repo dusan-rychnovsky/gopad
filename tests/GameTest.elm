@@ -12,6 +12,7 @@ game date black white location =
     , blackPlayer = black
     , whitePlayer = white
     , location = location
+    , placingHandicapMode = False
     , goban = Goban.empty 19
     }
 

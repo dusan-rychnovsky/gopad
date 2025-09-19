@@ -44,14 +44,19 @@ stoneImgSize =
     33
 
 
-gameHistoryTextAreaSize : { width : Int, height : Int }
-gameHistoryTextAreaSize =
+rightPaneSize : { width : Int, height : Int }
+rightPaneSize =
     { width = 100, height = gobanImgSize }
+
+
+handicapImgHeight : Int
+handicapImgHeight =
+    35
 
 
 pageWidth : Int
 pageWidth =
-    gobanImgSize + 5 + gameHistoryTextAreaSize.width
+    gobanImgSize + 5 + rightPaneSize.width
 
 
 type alias Model =
@@ -68,6 +73,7 @@ type Msg
     | UndoMove
     | SaveGame
     | NewGame
+    | ToggleHandicap
 
 
 main : Program Encode.Value Model Msg
@@ -119,9 +125,13 @@ update msg model =
                     Goban.posToCoords model.goban.size posX posY gobanImgSize
 
                 newGoban =
-                    Goban.placeStone model.goban coords
+                    if model.placingHandicapMode then
+                        Goban.placeHandicapStone model.goban coords
+
+                    else
+                        Goban.placeStone model.goban coords
             in
-            ( Debug.log "Model" { model | goban = newGoban }, Cmd.none )
+            ( { model | goban = newGoban }, Cmd.none )
 
         UndoMove ->
             ( { model | goban = Goban.undoMove model.goban }, Cmd.none )
@@ -147,6 +157,9 @@ update msg model =
 
         NewGame ->
             ( Game.emptyGame boardSize, triggerInitTime )
+
+        ToggleHandicap ->
+            ( { model | placingHandicapMode = not model.placingHandicapMode }, Cmd.none )
 
 
 updateAndStoreState : Msg -> Model -> ( Model, Cmd Msg )
@@ -225,7 +238,7 @@ view model =
                     ]
                 ]
             ]
-        , div [ class "game-history-container" ]
+        , div [ class "game-container" ]
             [ div [ style "position" "relative", style "width" (String.fromInt gobanImgSize ++ "px"), style "height" (String.fromInt gobanImgSize ++ "px") ]
                 ([ img
                     [ src "public/goban.png"
@@ -272,14 +285,29 @@ view model =
                                 )
                        )
                 )
-            , Html.textarea
-                [ Html.Attributes.class "game-history-textarea"
-                , Html.Attributes.style "height" (String.fromInt gameHistoryTextAreaSize.height ++ "px")
-                , Html.Attributes.style "width" (String.fromInt gameHistoryTextAreaSize.width ++ "px")
-                , Html.Attributes.readonly True
-                , Html.Attributes.value (gameHistoryContent model.goban)
+            , div [ class "right-pane" ]
+                [ button
+                    [ type_ "button"
+                    , class
+                        (if model.placingHandicapMode then
+                            "handicap-button toggled"
+
+                         else
+                            "handicap-button"
+                        )
+                    , style "width" (String.fromInt rightPaneSize.width ++ "px")
+                    , onClick ToggleHandicap
+                    ]
+                    [ text "Handicap" ]
+                , Html.textarea
+                    [ Html.Attributes.class "game-history-textarea"
+                    , Html.Attributes.style "height" (String.fromInt (rightPaneSize.height - handicapImgHeight) ++ "px")
+                    , Html.Attributes.style "width" (String.fromInt rightPaneSize.width ++ "px")
+                    , Html.Attributes.readonly True
+                    , Html.Attributes.value (gameHistoryContent model.goban)
+                    ]
+                    []
                 ]
-                []
             ]
         ]
 

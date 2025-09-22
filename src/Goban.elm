@@ -108,4 +108,4 @@ undoMove goban =
 
 currentSituation : Goban -> Situation
 currentSituation goban =
-    Array.foldl applyMove { gobanSize = goban.size, stones = Dict.empty } goban.moves
+    Array.foldl applyMove { gobanSize = goban.size, stones = Dict.empty, captures = Dict.empty } goban.moves

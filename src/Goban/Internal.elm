@@ -49,7 +49,7 @@ applyMove move situation =
         newStones =
             List.foldl Dict.remove newSituation.stones stonesToRemove
     in
-    { situation | stones = newStones }
+    incCaptured { newSituation | stones = newStones } move.color (List.length stonesToRemove)
 
 
 allGroups : Situation -> Color -> List Group

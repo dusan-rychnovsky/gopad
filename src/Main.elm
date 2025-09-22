@@ -339,18 +339,34 @@ view model =
 gameHistoryContent : Goban -> String
 gameHistoryContent goban =
     let
-        moves =
+        situation =
+            Goban.currentSituation goban
+
+        whiteCaptures =
+            Goban.numCaptured situation Goban.White
+
+        blackCaptures =
+            Goban.numCaptured situation Goban.Black
+
+        textCaptures =
+            "B: "
+                ++ String.fromInt blackCaptures
+                ++ "\n"
+                ++ "W: "
+                ++ String.fromInt whiteCaptures
+                ++ "\n"
+
+        textMoves =
             goban.moves
                 |> Array.toList
                 |> List.indexedMap
                     (\i move ->
                         String.padLeft 2 '0' (String.fromInt (i + 1)) ++ Sgf.moveToSgf move
                     )
+                |> String.join "\n"
     in
-    "GAME:\n-----"
-        ++ (if List.isEmpty moves then
-                ""
-
-            else
-                "\n" ++ String.join "\n" moves
-           )
+    "GAME:\n"
+        ++ "-----\n"
+        ++ textCaptures
+        ++ "-----\n"
+        ++ textMoves

@@ -33,6 +33,7 @@ all =
                         situation =
                             { gobanSize = 19
                             , stones = Dict.fromList [ ( ( 4, 4 ), Black ) ]
+                            , captures = Dict.empty
                             }
 
                         group =
@@ -45,6 +46,7 @@ all =
                         situation =
                             { gobanSize = 19
                             , stones = Dict.fromList [ ( ( 4, 4 ), Black ), ( ( 4, 5 ), White ), ( ( 4, 3 ), White ), ( ( 3, 4 ), White ), ( ( 5, 4 ), White ) ]
+                            , captures = Dict.empty
                             }
 
                         group =
@@ -57,6 +59,7 @@ all =
                         situation =
                             { gobanSize = 19
                             , stones = Dict.fromList [ ( ( 4, 4 ), Black ), ( ( 4, 5 ), Black ), ( ( 4, 3 ), White ), ( ( 3, 4 ), White ), ( ( 5, 4 ), White ) ]
+                            , captures = Dict.empty
                             }
 
                         group =
@@ -69,6 +72,7 @@ all =
                         situation =
                             { gobanSize = 19
                             , stones = Dict.fromList [ ( ( 4, 4 ), Black ), ( ( 4, 5 ), Black ), ( ( 4, 3 ), White ), ( ( 3, 4 ), White ), ( ( 5, 4 ), White ), ( ( 4, 6 ), White ), ( ( 5, 5 ), White ), ( ( 3, 5 ), White ) ]
+                            , captures = Dict.empty
                             }
 
                         group =
@@ -83,6 +87,7 @@ all =
                         situation =
                             { gobanSize = 19
                             , stones = Dict.fromList [ ( ( 4, 4 ), Black ) ]
+                            , captures = Dict.empty
                             }
 
                         group =
@@ -95,6 +100,7 @@ all =
                         situation =
                             { gobanSize = 19
                             , stones = Dict.fromList [ ( ( 0, 0 ), Black ) ]
+                            , captures = Dict.empty
                             }
 
                         group =
@@ -107,6 +113,7 @@ all =
                         situation =
                             { gobanSize = 19
                             , stones = Dict.fromList [ ( ( 0, 4 ), Black ) ]
+                            , captures = Dict.empty
                             }
 
                         group =
@@ -119,6 +126,7 @@ all =
                         situation =
                             { gobanSize = 19
                             , stones = Dict.fromList [ ( ( 4, 4 ), Black ), ( ( 4, 5 ), Black ) ]
+                            , captures = Dict.empty
                             }
 
                         group =
@@ -131,6 +139,7 @@ all =
                         situation =
                             { gobanSize = 19
                             , stones = Dict.fromList [ ( ( 4, 4 ), Black ), ( ( 4, 5 ), White ) ]
+                            , captures = Dict.empty
                             }
 
                         group =
@@ -145,6 +154,7 @@ all =
                         situation =
                             { gobanSize = 9
                             , stones = Dict.empty
+                            , captures = Dict.empty
                             }
                     in
                     Expect.equal (stoneAt situation ( 3, 3 )) Nothing
@@ -154,6 +164,7 @@ all =
                         situation =
                             { gobanSize = 9
                             , stones = Dict.fromList [ ( ( 3, 3 ), Black ) ]
+                            , captures = Dict.empty
                             }
                     in
                     Expect.equal (stoneAt situation ( 3, 3 )) (Just Black)
@@ -163,6 +174,7 @@ all =
                         situation =
                             { gobanSize = 9
                             , stones = Dict.fromList [ ( ( 4, 4 ), White ) ]
+                            , captures = Dict.empty
                             }
                     in
                     Expect.equal (stoneAt situation ( 4, 4 )) (Just White)
@@ -172,6 +184,7 @@ all =
                         situation =
                             { gobanSize = 9
                             , stones = Dict.fromList [ ( ( 3, 3 ), Black ), ( ( 4, 4 ), White ) ]
+                            , captures = Dict.empty
                             }
                     in
                     Expect.equal (stoneAt situation ( 5, 5 )) Nothing
@@ -183,6 +196,7 @@ all =
                         situation =
                             { gobanSize = 9
                             , stones = Dict.fromList [ ( ( 3, 3 ), Black ) ]
+                            , captures = Dict.empty
                             }
 
                         groups =
@@ -195,6 +209,7 @@ all =
                         situation =
                             { gobanSize = 9
                             , stones = Dict.fromList [ ( ( 3, 3 ), Black ), ( ( 3, 4 ), Black ) ]
+                            , captures = Dict.empty
                             }
 
                         groups =
@@ -207,6 +222,7 @@ all =
                         situation =
                             { gobanSize = 9
                             , stones = Dict.fromList [ ( ( 3, 3 ), Black ), ( ( 5, 5 ), Black ) ]
+                            , captures = Dict.empty
                             }
 
                         groups =
@@ -224,6 +240,7 @@ all =
                         situation =
                             { gobanSize = 9
                             , stones = Dict.fromList [ ( ( 3, 3 ), Black ), ( ( 4, 4 ), Black ) ]
+                            , captures = Dict.empty
                             }
 
                         groups =
@@ -241,6 +258,7 @@ all =
                         situation =
                             { gobanSize = 9
                             , stones = Dict.fromList [ ( ( 3, 3 ), Black ), ( ( 3, 4 ), White ), ( ( 4, 4 ), Black ) ]
+                            , captures = Dict.empty
                             }
 
                         groups =
@@ -398,5 +416,68 @@ all =
                                 )
                     in
                     Expect.equal (currentPlayer goban) Black
+            ]
+        , describe "applyMove"
+            [ test "placing a stone on empty board" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 9
+                            , stones = Dict.empty
+                            , captures = Dict.empty
+                            }
+
+                        move =
+                            { color = Black, coords = ( 4, 4 ) }
+
+                        result =
+                            applyMove move situation
+                    in
+                    Expect.equal (Dict.get ( 4, 4 ) result.stones) (Just Black)
+            , test "captures opponent group" <|
+                \_ ->
+                    let
+                        -- White group at (1,1) surrounded except for (1,2)
+                        situation =
+                            { gobanSize = 3
+                            , stones =
+                                Dict.fromList
+                                    [ ( ( 0, 1 ), Black )
+                                    , ( ( 1, 0 ), Black )
+                                    , ( ( 2, 1 ), Black )
+                                    , ( ( 1, 1 ), White )
+                                    ]
+                            , captures = Dict.empty
+                            }
+
+                        move =
+                            { color = Black, coords = ( 1, 2 ) }
+
+                        result =
+                            applyMove move situation
+                    in
+                    Expect.equal (Dict.get ( 1, 1 ) result.stones) Nothing
+            , test "updates captures after capture" <|
+                \_ ->
+                    let
+                        situation =
+                            { gobanSize = 3
+                            , stones =
+                                Dict.fromList
+                                    [ ( ( 0, 1 ), Black )
+                                    , ( ( 1, 0 ), Black )
+                                    , ( ( 2, 1 ), Black )
+                                    , ( ( 1, 1 ), White )
+                                    ]
+                            , captures = Dict.empty
+                            }
+
+                        move =
+                            { color = Black, coords = ( 1, 2 ) }
+
+                        result =
+                            applyMove move situation
+                    in
+                    Expect.equal (numCaptured result Black) 1
             ]
         ]

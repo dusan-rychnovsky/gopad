@@ -15,7 +15,6 @@ game =
     , blackPlayer = "Bob"
     , whitePlayer = "Alice"
     , location = "Wonderland"
-    , placingHandicapMode = False
     , goban = Goban.empty 19
     }
 
@@ -26,7 +25,6 @@ initGame date black white location =
     , blackPlayer = black
     , whitePlayer = white
     , location = location
-    , placingHandicapMode = False
     , goban = Goban.empty 19
     }
 

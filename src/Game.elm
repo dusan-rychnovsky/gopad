@@ -10,7 +10,6 @@ type alias Game =
     , blackPlayer : String
     , whitePlayer : String
     , location : String
-    , placingHandicapMode : Bool
     , goban : Goban
     }
 
@@ -20,7 +19,6 @@ emptyGame boardSize =
     , blackPlayer = ""
     , whitePlayer = ""
     , location = ""
-    , placingHandicapMode = False
     , goban = Goban.empty boardSize
     }
 

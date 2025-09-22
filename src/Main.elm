@@ -49,8 +49,8 @@ rightPaneSize =
     { width = 100, height = gobanImgSize }
 
 
-handicapImgHeight : Int
-handicapImgHeight =
+handicapButtonHeight : Int
+handicapButtonHeight =
     35
 
 
@@ -60,7 +60,9 @@ pageWidth =
 
 
 type alias Model =
-    Game
+    { game : Game
+    , placingHandicapMode : Bool
+    }
 
 
 type Msg
@@ -89,15 +91,19 @@ main =
 init : Encode.Value -> ( Model, Cmd Msg )
 init flags =
     let
-        model =
+        game =
             case Decode.decodeValue Persist.decodeGame flags of
-                Ok game ->
-                    game
+                Ok storedGame ->
+                    storedGame
 
                 Err _ ->
                     Game.emptyGame boardSize
     in
-    ( model, triggerInitTime )
+    ( { game = game
+      , placingHandicapMode = False
+      }
+    , triggerInitTime
+    )
 
 
 triggerInitTime : Cmd Msg
@@ -107,59 +113,70 @@ triggerInitTime =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    let
+        ( game, placingHandicapMode ) =
+            ( model.game, model.placingHandicapMode )
+
+        goban =
+            game.goban
+    in
     case msg of
         InitTime time zone ->
             let
                 newDate =
-                    if String.trim model.date == "" then
+                    if String.trim game.date == "" then
                         DateFormat.formatDate time zone
 
                     else
-                        model.date
+                        game.date
             in
-            ( { model | date = newDate }, Cmd.none )
+            ( { model | game = { game | date = newDate } }, Cmd.none )
 
         GobanClicked ( posX, posY ) ->
             let
                 coords =
-                    Goban.posToCoords model.goban.size posX posY gobanImgSize
+                    Goban.posToCoords goban.size posX posY gobanImgSize
 
                 newGoban =
-                    if model.placingHandicapMode then
-                        Goban.placeHandicapStone model.goban coords
+                    if placingHandicapMode then
+                        Goban.placeHandicapStone goban coords
 
                     else
-                        Goban.placeStone model.goban coords
+                        Goban.placeStone goban coords
             in
-            ( { model | goban = newGoban }, Cmd.none )
+            ( { model | game = { game | goban = newGoban } }, Cmd.none )
 
         UndoMove ->
-            ( { model | goban = Goban.undoMove model.goban }, Cmd.none )
+            ( { model | game = { game | goban = Goban.undoMove goban } }, Cmd.none )
 
         UpdateDate date ->
-            ( { model | date = date }, Cmd.none )
+            ( { model | game = { game | date = date } }, Cmd.none )
 
         UpdateBlackPlayer player ->
-            ( { model | blackPlayer = player }, Cmd.none )
+            ( { model | game = { game | blackPlayer = player } }, Cmd.none )
 
         UpdateWhitePlayer player ->
-            ( { model | whitePlayer = player }, Cmd.none )
+            ( { model | game = { game | whitePlayer = player } }, Cmd.none )
 
         UpdateLocation location ->
-            ( { model | location = location }, Cmd.none )
+            ( { model | game = { game | location = location } }, Cmd.none )
 
         SaveGame ->
             let
                 ( fileName, fileContent ) =
-                    toSgf model
+                    toSgf game
             in
             ( model, downloadFile { fileName = fileName, fileContent = fileContent } )
 
         NewGame ->
-            ( Game.emptyGame boardSize, triggerInitTime )
+            ( { game = Game.emptyGame boardSize
+              , placingHandicapMode = False
+              }
+            , triggerInitTime
+            )
 
         ToggleHandicap ->
-            ( { model | placingHandicapMode = not model.placingHandicapMode }, Cmd.none )
+            ( { model | placingHandicapMode = not placingHandicapMode }, Cmd.none )
 
 
 updateAndStoreState : Msg -> Model -> ( Model, Cmd Msg )
@@ -169,12 +186,19 @@ updateAndStoreState msg oldModel =
             update msg oldModel
     in
     ( newModel
-    , Cmd.batch [ storeState (Persist.encodeGame newModel), cmds ]
+    , Cmd.batch [ storeState (Persist.encodeGame newModel.game), cmds ]
     )
 
 
 view : Model -> Html Msg
 view model =
+    let
+        ( game, placingHandicapMode ) =
+            ( model.game, model.placingHandicapMode )
+
+        goban =
+            game.goban
+    in
     div [ class "gopad" ]
         [ h1 [ class "header" ] [ text "GOPAD" ]
         , div [ class "form-container", style "width" (String.fromInt pageWidth ++ "px") ]
@@ -182,7 +206,7 @@ view model =
                 [ div [ class "form-row form-row-buttons" ]
                     [ button
                         [ type_ "button"
-                        , if Goban.isEmpty model.goban then
+                        , if Goban.isEmpty goban then
                             disabled True
 
                           else
@@ -200,7 +224,7 @@ view model =
                         , input
                             [ type_ "text"
                             , class "input input-date"
-                            , value model.date
+                            , value game.date
                             , onInput UpdateDate
                             ]
                             []
@@ -210,7 +234,7 @@ view model =
                         , input
                             [ type_ "text"
                             , class "input input-black"
-                            , value model.blackPlayer
+                            , value game.blackPlayer
                             , onInput UpdateBlackPlayer
                             ]
                             []
@@ -220,7 +244,7 @@ view model =
                         , input
                             [ type_ "text"
                             , class "input input-white"
-                            , value model.whitePlayer
+                            , value game.whitePlayer
                             , onInput UpdateWhitePlayer
                             ]
                             []
@@ -230,7 +254,7 @@ view model =
                         , input
                             [ type_ "text"
                             , class "input input-location"
-                            , value model.location
+                            , value game.location
                             , onInput UpdateLocation
                             ]
                             []
@@ -254,7 +278,7 @@ view model =
                     ]
                     []
                  ]
-                    ++ (Goban.currentSituation model.goban
+                    ++ (Goban.currentSituation goban
                             |> .stones
                             |> Dict.toList
                             |> List.map
@@ -289,7 +313,7 @@ view model =
                 [ button
                     [ type_ "button"
                     , class
-                        (if model.placingHandicapMode then
+                        (if placingHandicapMode then
                             "handicap-button toggled"
 
                          else
@@ -301,10 +325,10 @@ view model =
                     [ text "Handicap" ]
                 , Html.textarea
                     [ Html.Attributes.class "game-history-textarea"
-                    , Html.Attributes.style "height" (String.fromInt (rightPaneSize.height - handicapImgHeight) ++ "px")
+                    , Html.Attributes.style "height" (String.fromInt (rightPaneSize.height - handicapButtonHeight) ++ "px")
                     , Html.Attributes.style "width" (String.fromInt rightPaneSize.width ++ "px")
                     , Html.Attributes.readonly True
-                    , Html.Attributes.value (gameHistoryContent model.goban)
+                    , Html.Attributes.value (gameHistoryContent goban)
                     ]
                     []
                 ]

@@ -14,60 +14,42 @@ emptyGoban =
     Goban.empty 19
 
 
+imgSize : Int
+imgSize =
+    695
+
+
 all : Test
 all =
     describe "Goban"
         [ describe "coordsToPos"
-            (let
-                imgSize =
-                    900
-
-                scale v =
-                    round (v * imgSize / 2000)
-             in
-             [ test "center of board" <|
+            [ test "center of board" <|
                 \_ ->
-                    Expect.equal (coordsToPos ( 9, 9 ) imgSize)
-                        ( scale 996, scale 996 )
-             , test "top-left corner" <|
+                    Expect.equal (coordsToPos ( 9, 9 ) imgSize) ( 354, 354 )
+            , test "top-left corner" <|
                 \_ ->
-                    Expect.equal (coordsToPos ( 0, 0 ) imgSize)
-                        ( scale 60, scale 60 )
-             , test "bottom-right corner" <|
+                    Expect.equal (coordsToPos ( 0, 0 ) imgSize) ( 30, 30 )
+            , test "bottom-right corner" <|
                 \_ ->
-                    Expect.equal (coordsToPos ( 18, 18 ) imgSize)
-                        ( scale 1932, scale 1932 )
-             ]
-            )
+                    Expect.equal (coordsToPos ( 18, 18 ) imgSize) ( 678, 678 )
+            ]
         , describe "posToCoords"
-            (let
-                imgSize =
-                    900
-
-                scale v =
-                    round (v * imgSize / 2000)
-             in
-             [ test "center of board (should be (9,9))" <|
+            [ test "center of board (should be (9,9))" <|
                 \_ ->
-                    Expect.equal (posToCoords 19 (scale 1000) (scale 1000) imgSize) ( 9, 9 )
-             , test "top-left corner (should be (0,0))" <|
+                    Expect.equal (posToCoords 19 348 348 imgSize) ( 9, 9 )
+            , test "top-left corner (should be (0,0))" <|
                 \_ ->
-                    Expect.equal (posToCoords 19 (scale 60) (scale 60) imgSize) ( 0, 0 )
-             , test "bottom-right corner (should be (18,18))" <|
+                    Expect.equal (posToCoords 19 30 30 imgSize) ( 0, 0 )
+            , test "bottom-right corner (should be (18,18))" <|
                 \_ ->
-                    let
-                        px =
-                            scale (2000 - 60)
-                    in
-                    Expect.equal (posToCoords 19 px px imgSize) ( 18, 18 )
-             , test "outside top-left clamps to (0,0)" <|
+                    Expect.equal (posToCoords 19 685 685 imgSize) ( 18, 18 )
+            , test "outside top-left clamps to (0,0)" <|
                 \_ ->
                     Expect.equal (posToCoords 19 0 0 imgSize) ( 0, 0 )
-             , test "outside bottom-right clamps to (18,18)" <|
+            , test "outside bottom-right clamps to (18,18)" <|
                 \_ ->
-                    Expect.equal (posToCoords 19 (scale 2000) (scale 2000) imgSize) ( 18, 18 )
-             ]
-            )
+                    Expect.equal (posToCoords 19 695 695 imgSize) ( 18, 18 )
+            ]
         , describe "placeStone"
             [ test "places black stone on empty board" <|
                 \_ ->

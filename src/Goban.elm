@@ -8,10 +8,10 @@ import Set exposing (Set)
 
 
 gobanImg =
-    { sizePx = 2000.0
-    , paddingPx = 60.0
-    , squarePx = 99.0
-    , linePx = 5.0
+    { sizePx = 695.0
+    , paddingPx = 30.0
+    , squarePx = 34.0
+    , linePx = 2.0
     }
 
 

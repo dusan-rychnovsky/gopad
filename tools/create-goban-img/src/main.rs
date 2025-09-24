@@ -1,5 +1,5 @@
 use image::{Rgb, RgbImage};
-use imageproc::drawing::draw_text_mut;
+use imageproc::drawing::{draw_text_mut, draw_filled_circle_mut};
 use rusttype::{Font, Scale};
 
 fn main() {
@@ -30,6 +30,20 @@ fn main() {
                 img.put_pixel(x, pos + t, line_color);
             }
         }
+    }
+
+    // Draw star points
+    let star_color = Rgb([0, 0, 0]);
+    let star_radius = 4;
+    let star_points = [
+        (3, 3), (3, 9), (3, 15),
+        (9, 3), (9, 9), (9, 15),
+        (15, 3), (15, 9), (15, 15)
+    ];
+    for &(i, j) in &star_points {
+        let x = padding + i * square_size + ((i as f32 + 0.5) * line_thickness as f32) as u32;
+        let y = padding + j * square_size + ((j as f32 + 0.5) * line_thickness as f32) as u32;
+        draw_filled_circle_mut(&mut img, (x as i32, y as i32), star_radius, star_color);
     }
 
     // Load font

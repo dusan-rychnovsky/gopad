@@ -1,4 +1,6 @@
 use image::{Rgb, RgbImage};
+use imageproc::drawing::draw_text_mut;
+use rusttype::{Font, Scale};
 
 fn main() {
     let goban_size = 695;
@@ -28,6 +30,32 @@ fn main() {
                 img.put_pixel(x, pos + t, line_color);
             }
         }
+    }
+
+    // Load font
+    let font_data = std::fs::read("resources/dejavu-sans.book.ttf").expect("Font file not found");
+    let font = Font::try_from_vec(font_data).expect("Error constructing Font");
+    let font_scale = Scale { x: 18.0, y: 18.0 };
+    let text_color = Rgb([0, 0, 0]);
+
+    let letters: Vec<char> = (b'A'..=b'S').map(|c| c as char).collect();
+
+    // Annotate top
+    for (i, &ch) in letters.iter().enumerate() {
+        let i = i as u32;
+        let font_size = 10;
+        let x = padding + i * square_size + (i + 1) * line_thickness - font_size / 2;
+        let top_margin = 7;
+        draw_text_mut(&mut img, text_color, x as i32, top_margin as i32, font_scale, &font, &ch.to_string());
+    }
+
+    // Annotate left
+    for (i, &ch) in letters.iter().enumerate() {
+        let i = i as u32;
+        let font_size = 18;
+        let left_margin = 11;
+        let y = padding + i * square_size + (i + 1) * line_thickness - font_size / 2;
+        draw_text_mut(&mut img, text_color, left_margin as i32, y as i32, font_scale, &font, &ch.to_string());
     }
 
     // Save as PNG

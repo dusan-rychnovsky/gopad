@@ -5,18 +5,18 @@ import Expect
 import Game
 import Goban
 import Goban.Types as Goban
-import Main exposing (gameHistoryContent)
+import Main exposing (viewGameHistoryContent)
 import Test exposing (..)
 
 
 tests : Test
 tests =
-    describe "gameHistoryContent"
+    describe "viewGameHistoryContent"
         [ test "empty game" <|
             \_ ->
                 Expect.equal
                     "GAME:\n-----\nB: 0\nW: 0\n-----\n"
-                    (gameHistoryContent (Goban.empty 19))
+                    (viewGameHistoryContent (Goban.empty 19))
         , test "game with two moves" <|
             \_ ->
                 let
@@ -31,7 +31,7 @@ tests =
                 in
                 Expect.equal
                     "GAME:\n-----\nB: 0\nW: 0\n-----\n01;B[ed]\n02;W[ck]"
-                    (gameHistoryContent goban)
+                    (viewGameHistoryContent goban)
         , test "game with captures" <|
             \_ ->
                 let
@@ -51,5 +51,5 @@ tests =
                 in
                 Expect.equal
                     "GAME:\n-----\nB: 0\nW: 0\n-----\n01;B[cc]\n02;W[cb]\n03;B[dc]\n04;W[db]\n05;B[cd]\n06;W[dd]\n07;B[bc]\n08;W[ee]\n09;B[ec]"
-                    (gameHistoryContent goban)
+                    (viewGameHistoryContent goban)
         ]
